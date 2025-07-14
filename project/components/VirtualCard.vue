@@ -7,7 +7,7 @@
             <!-- Card Header -->
             <div class="card-header flex justify-between items-start mb-4">
                 <div class="logo-container flex-shrink-0 mr-4" style="min-width: 120px;">
-                    <img class="w-auto h-6 md:h-8 " src="~/assets/img/techhub logo.png" alt="TechHub Logo"
+                <img class="w-auto h-6 md:h-8 " src="~/assets/img/techhub logo.png" alt="TechHub Logo"
                         style="display: block; max-height: 32px;" />
                 </div>
                 <div class="text-right flex-1">
@@ -39,6 +39,9 @@
                     <p class="text-xs text-gray-500 mt-2 text-center">Passport</p>
                 </div>
             </div>
+
+                        <qr-code-maker :userId="user._id" />
+
 
             <!-- Card Footer -->
             <div class="card-footer mt-4 pt-4 border-t text-center text-xs text-gray-500">
@@ -106,7 +109,6 @@ const fetchUserProfile = async () => {
         });
 
         user.value = response.data;
-        console.log(user.value);
 
     } catch (error) {
         console.error('Error fetching user profile:', error);

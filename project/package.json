@@ -19,6 +19,7 @@
     "dom-to-image": "^2.6.0",
     "nuxt": "^3.13.0",
     "pinia": "^3.0.1",
+    "qrcode": "^1.5.4",
     "vue-paystack": "^2.0.4",
     "vue3-toastify": "^0.2.8",
     "zod": "^3.22.4"
