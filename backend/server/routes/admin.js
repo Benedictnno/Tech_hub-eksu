@@ -36,6 +36,7 @@ router.get("/users/:id", protect, admin, async (req, res) => {
   }
 });
 
+
 // @route   PUT /api/admin/users/:id
 // @desc    Update user
 // @access  Private/Admin

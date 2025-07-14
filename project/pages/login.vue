@@ -120,8 +120,18 @@ const login = async () => {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
+      // Check if users subscription has expired 
+      const isActive = computed(() => {
+  if (!user.value?.endDate) return false
+  const now = new Date()
+  const expiry = new Date(user.value.endDate)
+  return expiry > now
+})
+
+console.log(isActive);
+
       // Determine where to redirect based on user progress
-      if (!user.hasPaid) {
+      if (!user.hasPaid || isActive) {
         router.push('/payment');
       } else if (!user.isOnboarded) {
         router.push('/onboarding');

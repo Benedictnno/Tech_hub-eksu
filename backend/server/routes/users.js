@@ -111,6 +111,7 @@ router.get("/qrcode", protect, async (req, res) => {
   }
 });
 
+
 // @route   POST /api/users/payment
 // @desc    Process user payment and activate subscription
 // @access  Private
