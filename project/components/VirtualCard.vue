@@ -12,7 +12,7 @@
                 </div>
                 <div class="text-right flex-1">
                     <h3 class="text-xs md:text-md pb-1 font-bold text-blue-600 whitespace-nowrap">MEMBERSHIP CARD</h3>
-                    <p class="text-gray-500 text-xs">Valid until {{ formatDate(membershipExpiry) }}</p>
+                    <p class="text-gray-500 text-xs">Valid until {{ formatDate(expiry) }}</p>
                 </div>
             </div>
 
@@ -92,8 +92,11 @@ const props = defineProps({
     }
 });
 
+
+
 // Fetch user details from API
 const user = ref({});
+const expiry = ref('');
 
 const fetchUserProfile = async () => {
     try {
@@ -101,23 +104,37 @@ const fetchUserProfile = async () => {
         if (!token) {
             throw new Error('No token found');
         }
-
+        
         const response = await axios.get('http://localhost:5000/api/users/profile', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-
+        
         user.value = response.data;
-
+        
     } catch (error) {
         console.error('Error fetching user profile:', error);
+        
+    }
+};
+const endOfSession = async () => {
+    try {
       
+        const response = await axios.get('http://localhost:5000/api/users/start-of-current-session');
+        
+        expiry.value = response.data.data.endDate;
+        console.log(response.data.data.endDate);
+        
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        
     }
 };
 
 onMounted(() => {
     fetchUserProfile();
+    endOfSession()
 });
 
 // Refs
@@ -130,6 +147,7 @@ const companyName = 'TechhubEksu';
 const supportEmail = 'techhubeksu@gmail.com';
 const supportPhone = '+234 815 9360 009';
 
+console.log(expiry);
 // Format date to human-readable format
 const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', {

@@ -26,11 +26,6 @@ const subscriptionSchema = new mongoose.Schema({
     enum: ["semester", "session"],
     required: true,
   },
-  duration: {
-    type: Number,
-    required: true,
-    enum: [1, 2],
-  },
   startDate: {
     type: Date,
     required: true,
@@ -117,15 +112,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       // required: true
     },
-    semesterCount: {
-      type: Number,
-      required: true,
-      enum: [1, 2],
-    },
     sessionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Session",
-      required: true,
+     
     },
 
     createdAt: {

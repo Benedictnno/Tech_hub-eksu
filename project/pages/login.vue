@@ -69,97 +69,73 @@
 </template>
 
 <script setup>
-import axios from 'axios';
-import { toast } from 'vue3-toastify';
-import { z } from 'zod';
+import axios from 'axios'
+import { toast } from 'vue3-toastify'
+import { useRouter } from 'vue-router'
+import { z } from 'zod'
+import { ref, reactive } from 'vue'
 
+const router = useRouter()
 
-
-const router = useRouter();
 const form = reactive({
   email: '',
   password: ''
-});
+})
 
 const errors = reactive({
   email: '',
   password: '',
   general: ''
-});
+})
 
-const isSubmitting = ref(false);
+const isSubmitting = ref(false)
 
 const schema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required')
-});
-
-const login = async () => {
-  // Reset errors
-  Object.keys(errors).forEach(key => errors[key] = '');
-
-  try {
-    isSubmitting.value = true;
-
-    // Validate form
-    schema.parse(form);
-
-    // Send login request to API
-    const response = await axios.post('http://localhost:5000/api/auth/login', form);
-    console.log('user:', response.data);
-
-    const fetchedUser = response.data;
-    const token = fetchedUser.token;
-    const user = fetchedUser;
-    toast.success('Login successful');
-
-    console.log('user:', token);
-
-    if (token && user) {
-      // Store token and user in localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-
-      // Check if users subscription has expired 
-      const isActive = computed(() => {
-  if (!user.value?.endDate) return false
-  const now = new Date()
-  const expiry = new Date(user.value.endDate)
-  return expiry > now
 })
 
-console.log(isActive);
+const login = async () => {
+  Object.keys(errors).forEach(key => errors[key] = '')
+  isSubmitting.value = true
 
-      // Determine where to redirect based on user progress
-      if (!user.hasPaid || isActive) {
-        router.push('/payment');
-      } else if (!user.isOnboarded) {
-        router.push('/onboarding');
-      } else {
-        router.push('/dashboard');
-      }
+  try {
+    schema.parse(form)
+
+    const response = await axios.post('http://localhost:5000/api/auth/login', form)
+    const user = response.data
+    const token = user.token
+
+    toast.success('Login successful')
+    localStorage.setItem('token', token)
+    localStorage.setItem('user', JSON.stringify(user))
+
+    const isActive = user?.subscription?.endDate &&
+      new Date(user.subscription.endDate) > new Date()
+
+    if (!user.hasPaid || !isActive) {
+      router.push('/payment')
+    } else if (!user.isOnboarded) {
+      router.push('/onboarding')
     } else {
-      errors.general = 'Invalid response from server';
+      router.push('/dashboard')
     }
 
   } catch (error) {
-    if (error.response && error.response.data) {
-      errors.general = error.response.data.message || 'Invalid email or password';
-      toast.error(errors.general);
-    } else if (error instanceof z.ZodError) {
+    if (error instanceof z.ZodError) {
       error.errors.forEach(err => {
-        if (err.path) {
-          errors[err.path[0]] = err.message;
-        }
-        toast.error(err.message);
-      });
+        if (err.path) errors[err.path[0]] = err.message
+        toast.error(err.message)
+      })
+    } else if (error.response?.data) {
+      errors.general = error.response.data.message || 'Invalid email or password'
+      toast.error(errors.general)
     } else {
-      toast.error('An error occurred during login');
-      console.error('Login error:', error);
-      errors.general = error.message || 'An error occurred during login';
+      toast.error('An error occurred during login')
+      console.error('Login error:', error)
     }
   } finally {
-    isSubmitting.value = false;
+    isSubmitting.value = false
   }
-};
+}
 </script>

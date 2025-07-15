@@ -354,7 +354,7 @@ const completeOnboarding = async () => {
       throw new Error('Authentication token not found');
     }
 
-    const response = await axios.put('https://techhub-eksu.onrender.com/api/users/profile', {
+    const response = await axios.put('http://localhost:5000/api/users/profile', {
       matric: form.matricNumber,
       department: form.department,
       level: form.level,

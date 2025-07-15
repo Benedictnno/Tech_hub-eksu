@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import User from '../models/User.js'; // adjust path as needed
 
 export const protect = async (req, res, next) => {
   let token;
@@ -15,20 +15,25 @@ export const protect = async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get user from the token
+      // Get user from token
       req.user = await User.findById(decoded.id).select('-password');
 
-      next();
+      if (!req.user) {
+        return res.status(401).json({ message: 'Not authorized, user not found' });
+      }
+
+      // Allow to proceed
+      return next();
     } catch (error) {
-      console.error(error);
-      res.status(401).json({ message: 'Not authorized, token failed' });
+      console.error('Token verification failed:', error.message);
+      return res.status(401).json({ message: 'Not authorized, token invalid' });
     }
   }
 
-  if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
-  }
+  // If no token was found
+  return res.status(401).json({ message: 'Not authorized, no token' });
 };
+
 
 export const admin = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {

@@ -12,7 +12,10 @@
 </template>
 
 <script>
+import axios from 'axios'
+import { ref, computed, onMounted } from 'vue'
 import metricCard from './metricCard.vue'
+const users = ref(0)
 
 export default {
   components: {
@@ -27,7 +30,7 @@ export default {
           iconSize: '40',
           iconContainerClass: ' p-2 bg-[#229a93] rounded',
           subtitle: 'Total Members',
-          content: '0',
+          content: users.value,
           borderColor: '#4cd4e4' // Add border color here
         },
         {
@@ -68,4 +71,18 @@ export default {
   },
 
 }
+onMounted(async () => {
+  try {
+    const { data } = await axios.get(`http://localhost:5000/api/users/all-users`)
+console.log(data.users);
+
+    if (data) {
+      users.value = data.users
+      
+    }
+  } catch (err) {
+    console.error('User fetch failed:', err)
+  }
+})
+
 </script>

@@ -119,7 +119,7 @@ const register = async () => {
     schema.parse(form);
 
     // Send data to API
-    const response = await axios.post('https://techhub-eksu.onrender.com/api/auth/register', form, {
+    const response = await axios.post('http://localhost:5000/api/auth/register', form, {
       headers: {
         'Content-Type': 'application/json'
       }

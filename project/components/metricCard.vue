@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="bg-white border sm:shadow-md rounded-lg px-4 py-3 flex items-center space-x-4">
     <!-- Icon Section -->
     <div :class="[iconContainerClass, borderColorClass]"

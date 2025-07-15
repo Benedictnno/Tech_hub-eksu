@@ -32,11 +32,19 @@ import axios from 'axios'
 
 const route = useRoute()
 const user = ref(null)
+const startDate = ref(null)
 
 const isActive = computed(() => {
-  if (!user.value?.endDate) return false
-  return new Date(user.value.endDate) > new Date()
+  if (!user.value?.subscription?.startDate || !user.value?.subscription?.endDate || !startDate.value) return false
+
+  const now = new Date()
+  const subStart = new Date(user.value.subscription.startDate)
+  const subEnd = new Date(user.value.subscription.endDate)
+  const sessionStart = new Date(startDate.value)
+
+  return subEnd > now && subStart >= sessionStart
 })
+
 
 const formatDate = (date) =>
   new Date(date).toLocaleDateString(undefined, {
@@ -44,22 +52,19 @@ const formatDate = (date) =>
     month: 'long',
     day: 'numeric'
   })
-  
-// const formatDate = (date) => {
-//   if (!date) return 'N/A'
-//   const d = new Date(date)
-//   return isNaN(d) ? 'Invalid date' : d.toLocaleDateString(undefined, {
-//     year: 'numeric',
-//     month: 'long',
-//     day: 'numeric'
-//   })
-// }
 
+onMounted(async () => {
+  try {
+    const { data } = await axios.get(`http://localhost:5000/api/users/${route.params.id}`)
+    const { data:start } = await axios.get(`http://localhost:5000/api/users/start-of-current-session`)
 
-  onMounted(async () => {
-  const {data} = await axios.get(`http://localhost:5000/api/users/${route.params.id}`)
-  if (data) user.value = data
-  console.log(user.value);
-  
+    if (data && start) {
+      user.value = data
+      startDate.value= start.data.startDate
+    }
+  } catch (err) {
+    console.error('User fetch failed:', err)
+  }
 })
 </script>
+

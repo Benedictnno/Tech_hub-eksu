@@ -25,6 +25,21 @@ router.get("/profile", protect, async (req, res) => {
   }
 });
 
+router.get("/all-users", async (req, res) => {
+  try {
+    const users = await User.find({}).select("-password");
+
+    if (users) {
+      res.json({users:users.length});
+    } else {
+      res.status(404).json({ message: "No users" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // @route   PUT /api/users/profile
 // @desc    Update user profile
 // @access  Private
@@ -115,23 +130,95 @@ router.get("/qrcode", protect, async (req, res) => {
 // @route   POST /api/users/payment
 // @desc    Process user payment and activate subscription
 // @access  Private
+// router.post("/make-payment", protect, async (req, res) => {
+//   try {
+//     const { subscriptionType } = req.body;
+
+//     if (
+//       !subscriptionType ||
+//       !["semester", "session"].includes(subscriptionType)
+//     ) {
+//       return res.status(400).json({ message: "Invalid subscription type" });
+//     }
+
+//     const user = await User.findById(req.user._id);
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     // Set subscription details
+
+//     // Get the only active academic session
+//     const session = await sessionModel.findOne({ isActive: true });
+
+//     if (!session) {
+//       return res.status(404).json({ message: "No active session found" });
+//     }
+
+//     const { startDate, endDate } = session;
+
+//     // When user registers and chooses semesters set end and expiring date
+
+//     let semesterCount = subscriptionType === "semester" ? 1 : 2;
+
+//     if (![1, 2].includes(semesterCount)) {
+//       throw new Error("Invalid semester count — must be 1 or 2");
+//     }
+
+//     // Calculate session duration
+//     const start = new Date(startDate);
+//     const end = new Date(endDate);
+//     const totalDuration = end.getTime() - start.getTime();
+
+//     const oneSemester = totalDuration / 2;
+
+//     // Compute expiry date
+//     const expiryDate = new Date(start.getTime() + oneSemester * semesterCount);
+
+//     // Create the user
+//     // await userModel.create({
+//     //   ...userData,
+//     //   semesterCount,
+//     //   sessionId: session._id,
+//     //   subscriptionExpiryDate: expiryDate,
+//     // });
+
+//     user.hasPaid = true;
+//     (user.sessionId = session._id),
+//       (user.semesterCount = semesterCount),
+//       (user.membershipType = subscriptionType);
+//     user.subscription = {
+//       type: subscriptionType,
+//       startDate,
+//       endDate: expiryDate,
+//       active: true,
+//     };
+
+//     await user.save();
+
+//     res.json({
+//       message: "Payment processed successfully",
+//       subscription: user.subscription,
+//       hasPaid: user.hasPaid,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+
 router.post("/make-payment", protect, async (req, res) => {
   try {
     const { subscriptionType } = req.body;
 
-    if (
-      !subscriptionType ||
-      !["semester", "session"].includes(subscriptionType)
-    ) {
-      return res.status(400).json({ message: "Invalid subscription type" });
-    }
-
     const user = await User.findById(req.user._id);
+    
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     // Set subscription details
 
     // Get the only active academic session
@@ -143,40 +230,18 @@ router.post("/make-payment", protect, async (req, res) => {
 
     const { startDate, endDate } = session;
 
-    // When user registers and chooses semesters set end and expiring date
-
-    let semesterCount = subscriptionType === "semester" ? 1 : 2;
-
-    if (![1, 2].includes(semesterCount)) {
-      throw new Error("Invalid semester count — must be 1 or 2");
-    }
-
     // Calculate session duration
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const totalDuration = end.getTime() - start.getTime();
-
-    const oneSemester = totalDuration / 2;
-
-    // Compute expiry date
-    const expiryDate = new Date(start.getTime() + oneSemester * semesterCount);
-
-    // Create the user
-    // await userModel.create({
-    //   ...userData,
-    //   semesterCount,
-    //   sessionId: session._id,
-    //   subscriptionExpiryDate: expiryDate,
-    // });
 
     user.hasPaid = true;
     (user.sessionId = session._id),
-      (user.semesterCount = semesterCount),
+
       (user.membershipType = subscriptionType);
     user.subscription = {
       type: subscriptionType,
-      startDate,
-      endDate: expiryDate,
+      startDate: start,
+      endDate: end,
       active: true,
     };
 
@@ -192,6 +257,7 @@ router.post("/make-payment", protect, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 // @route   POST /api/users/log-payment
 // @desc    Log payment reference from Paystack
@@ -221,6 +287,33 @@ router.post("/log-payment", protect, async (req, res) => {
   }
 });
 
+router.get('/start-of-current-session', async (req, res) => {
+  try {
+    const session = await sessionModel.findOne({ isActive: true }).lean();
+
+    if (!session) {
+      return res.status(404).json({
+        success: false,
+        message: "No active session found"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: session,
+      message: "Active session retrieved successfully"
+    });
+
+
+  } catch (err) {
+    console.error('Error fetching active session:', err);
+    res.status(500).json({
+      success: false,
+      message: 'An unexpected server error occurred'
+    });
+  }
+});
+
 
 // Get a single user by ID
 router.get('/:id', async (req, res) => {
@@ -238,6 +331,10 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error' })
   }
 })
+
+
+
+
 
 
 

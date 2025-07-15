@@ -39,7 +39,7 @@ export default {
                     throw new Error('No token found');
                 }
 
-                const response = await axios.post('http://localhost/api/users/make-payment', {
+                const response = await axios.post('http://localhost:5000/api/users/make-payment', {
                     subscriptionType: props.subscriptionType,
                 }, {
                     headers: {
@@ -60,7 +60,7 @@ export default {
                 const PaystackPop = window.PaystackPop;
 
                 const handler = PaystackPop.setup({
-                    key: "pk_live_bb70a34b5085732add52a245004becaa8a4d74a2",
+                    key: "pk_test_d966b8cb99e3637888a2f6843546298b65a629f6",
                     email: props.email,
                     amount: props.amount * 100,
                     callback: () => {
@@ -74,6 +74,7 @@ export default {
                 handler.openIframe();
             }
         };
+
 
         //    const logPayment = async (transactionId) => {
         //         try {
