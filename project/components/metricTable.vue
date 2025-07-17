@@ -66,17 +66,20 @@
 </template>
 
 <script setup>
+import axios from 'axios';
 import { ref, computed } from 'vue';
 
 const search = ref('');
 const data = ref([
-  { id: 1, username: 'John Doe', email: 'john@example.com', checkInTime: '2023-10-01T08:30:00', checkedIn: true, uniqueId: '1' },
-  { id: 2, username: 'Jane Smith', email: 'jane@example.com', checkInTime: '2023-10-01T09:00:00', checkedIn: false, uniqueId: '2' },
-  { id: 3, username: 'Bob Johnson', email: 'bob@example.com', checkInTime: '2023-10-01T09:30:00', checkedIn: true, uniqueId: '3' }
+  // { id: 1, username: 'John Doe', email: 'john@example.com', checkInTime: '2023-10-01T08:30:00', checkedIn: true, uniqueId: '1' },
+  // { id: 2, username: 'Jane Smith', email: 'jane@example.com', checkInTime: '2023-10-01T09:00:00', checkedIn: false, uniqueId: '2' },
+  // { id: 3, username: 'Bob Johnson', email: 'bob@example.com', checkInTime: '2023-10-01T09:30:00', checkedIn: true, uniqueId: '3' }
 ]);
 
+       
+
 const filteredData = computed(() => {
-  return data.value.filter(item => item.username.toLowerCase().includes(search.value.toLowerCase()));
+  return data.value.filter(item => item.name.toLowerCase().includes(search.value.toLowerCase()));
 });
 
 const checkOut = (uniqueId) => {
@@ -85,4 +88,20 @@ const checkOut = (uniqueId) => {
     item.checkedIn = false;
   }
 };
+
+
+onMounted(async()=>{
+  const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found');
+        }
+   const {data:totalCheckedIn}=await axios.get(`http://localhost:5000/api/attendance/total-checkedin`,{
+      headers: {
+                Authorization: `Bearer ${token}`
+            }
+   })
+   data.value= totalCheckedIn.users
+console.log(totalCheckedIn.users);
+
+})
 </script>

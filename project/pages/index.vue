@@ -4,6 +4,7 @@
       <div class="p-8">
         <div class="text-center mb-8">
           <div class="flex items-center flex-shrink-0 px-4">
+            
             <img class="w-auto h-8 mt-2"
               src="~/assets/img/techhub logo.png" alt="" />
             

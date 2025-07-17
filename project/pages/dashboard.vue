@@ -17,17 +17,25 @@
               Go to Profile
             </NuxtLink>
           </div>
-
-
-          <!-- <div class="mt-4">
+<!-- 
+          <div class="mt-4">
             <span v-if="userData.isCheckedIn" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
               Checked In
             </span>
             <span v-else class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
               Not Checked In
             </span>
-          </div> -->
+          </div>
+        </div> -->
+          <div class="mt-4">
+             <NuxtLink to="/profile" v-if="userRole === 'admin'" class="px-5 py-2 bg-blue-100 text-green-800 rounded-md text-lg">
+             Admin
+             </NuxtLink>
+      
+          </div>
         </div>
+
+
 
         <!-- Virtual Card Component -->
         <VirtualCard :user="userData" :membership-expiry="userData.membershipExpiry" />
@@ -341,11 +349,14 @@
 </template>
 
 <script setup>
+import axios from 'axios';
+
 const router = useRouter();
 const user = ref(null);
+const userRole= ref("")
 
 // Check if user is authenticated and has completed onboarding
-onMounted(() => {
+onMounted(async() => {
   const storedUser = localStorage.getItem('user');
   if (!storedUser) {
     router.push('/login');
@@ -353,10 +364,29 @@ onMounted(() => {
   }
 
   user.value = JSON.parse(storedUser);
-
+  
   if (!user.value.isOnboarded) {
     router.push('/onboarding');
   }
+
+   try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found');
+        }
+
+        const response = await axios.get('http://localhost:5000/api/users/current-user', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+
+        userRole.value = response.data.role;
+    } catch (error) {
+        console.error('Error fetching user:', error);
+    
+};
 });
 
 

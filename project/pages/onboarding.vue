@@ -19,7 +19,7 @@
 
         <form @submit.prevent="completeOnboarding" class="space-y-6">
           <!-- Profile Picture Upload -->
-          <div>
+          <!-- <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
             <div class="flex flex-col items-center">
               <div
@@ -44,7 +44,7 @@
                 {{ uploadStatus }}
               </p>
             </div>
-          </div>
+          </div> -->
 
           <div>
             <label for="matricNumber" class="block text-sm font-medium text-gray-700">Matric Number</label>

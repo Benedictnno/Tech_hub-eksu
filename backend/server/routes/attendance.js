@@ -7,46 +7,98 @@ const router = express.Router();
 // @route   POST /api/attendance/checkin
 // @desc    User self check-in
 // @access  Private
-router.post('/checkin', protect, verifyEligibility, async (req, res) => {
+
+router.post('/checkin', verifyEligibility, async (req, res) => {
   try {
-    const user = await User.findOne({ uniqueId: req.user.uniqueId });
-    
+    const { uniqueId } = req.body;
+
+    if (!uniqueId) {
+      return res.status(400).json({ message: 'Unique ID is required' });
+    }
+
+    const user = await User.findOne({ uniqueId });
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
-    // Check if user already checked in today
+
+    // Ensure attendance array exists
+    if (!Array.isArray(user.attendance)) {
+      user.attendance = [];
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    const todayAttendance = user.attendance.find(a => {
+
+    const alreadyCheckedIn = user.attendance.some((a) => {
+      if (!a.date || !a.checkIn) return false;
       const attendanceDate = new Date(a.date);
       attendanceDate.setHours(0, 0, 0, 0);
-      return attendanceDate.getTime() === today.getTime() && a.checkIn;
+      return attendanceDate.getTime() === today.getTime();
     });
-    
-    if (todayAttendance) {
+
+    if (alreadyCheckedIn) {
       return res.status(400).json({ message: 'Already checked in today' });
     }
-    
-    // Add new attendance record
+
+    const now = new Date();
     user.attendance.push({
-      date: today,
-      checkIn: new Date(),
+      date: now,
+      checkIn: now,
       checkOut: null
     });
-    
+
     await user.save();
-    
-    res.json({ 
+
+    res.json({
       message: 'Check-in successful',
-      checkInTime: new Date()
+      checkInTime: now
     });
   } catch (error) {
-    console.error(error);
+    console.error('Check-in failed:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+
+
+router.get('/total-checkedin', protect, async (req, res) => {
+  try {
+    const users = await User.find();
+
+    // Get today's date at midnight
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Filter users who checked in today
+    const checkedInToday = users.filter(user => 
+      user.attendance?.some(record => {
+        const attendanceDate = new Date(record.date);
+        attendanceDate.setHours(0, 0, 0, 0);
+        return attendanceDate.getTime() === today.getTime() && record.checkIn;
+      })
+    );
+
+    res.json({
+      total: checkedInToday.length,
+      users: checkedInToday.map(u => ({
+        name: u.name,
+        email: u.email,
+        uniqueId: u.uniqueId,
+        phone:u.phone,
+        checkInTime: u.attendance.find(a => {
+          const d = new Date(a.date);
+          d.setHours(0, 0, 0, 0);
+          return d.getTime() === today.getTime() && a.checkIn;
+        })?.checkIn
+      }))
+    });
+  } catch (error) {
+    console.error('Fetch total checked-in failed:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 // @route   POST /api/attendance/checkout
 // @desc    User self check-out

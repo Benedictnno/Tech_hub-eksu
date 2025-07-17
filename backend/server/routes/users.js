@@ -1,6 +1,6 @@
 import express from "express";
 import User from "../models/User.js";
-import { protect, verifyEligibility } from "../middleware/auth.js";
+import { protect } from "../middleware/auth.js";
 import { generateQRCode } from "../utils/qrCodeGenerator.js";
 import generateToken from "../utils/generateToken.js";
 import sessionModel from "../models/sessionModel.js";
@@ -24,6 +24,7 @@ router.get("/profile", protect, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 router.get("/all-users", async (req, res) => {
   try {
@@ -77,7 +78,7 @@ router.put("/profile", protect, async (req, res) => {
 // @access  Private
 router.get("/current-user", protect, async (req, res) => {
   try {
-    console.log(req.user._id);
+
     
     const user = await User.findById(req.user._id).select("-password");
 
@@ -319,7 +320,7 @@ router.get('/start-of-current-session', async (req, res) => {
 router.get('/:id', async (req, res) => {
   
   try {
-    const user = await User.findById(req.params.id).populate('sessionId')
+    const user = await User.findById(req.params.id).populate('sessionId').select("-password");
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' })

@@ -32,7 +32,7 @@ export const protect = async (req, res, next) => {
 
   // If no token was found
   return res.status(401).json({ message: 'Not authorized, no token' });
-};
+}; 
 
 
 export const admin = (req, res, next) => {
@@ -44,8 +44,10 @@ export const admin = (req, res, next) => {
 };
 
 export const verifyEligibility = async (req, res, next) => {
+ 
+  
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.body.id);
     
     if (!user.isRegistered || !user.hasPaid || !user.isOnboarded) {
       return res.status(403).json({ 

@@ -77,7 +77,10 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     subscription: subscriptionSchema,
-    attendance: [attendanceSchema],
+    attendance:{type: [attendanceSchema],
+    default: [] 
+
+    },
     qrCode: {
       type: String,
       default: null,

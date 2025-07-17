@@ -1,83 +1,80 @@
 <template>
-    <div class="virtual-card-container w-full flex flex-col justify-center items-center p-2">
-        <!-- <h2 class="text-xl font-bold mb-4">Your Virtual Membership Card</h2> -->
+  <div class="virtual-card-container w-full flex flex-col justify-center items-center p-4 sm:p-6 bg-gray-100 min-h-screen">
+    
+    <!-- Virtual Card Preview -->
+    <div
+      ref="cardElement"
+      class="card-preview border rounded-lg w-full max-w-[650px] shadow-lg bg-white p-4 sm:p-6 mb-6"
+    >
+      <!-- Card Header -->
+      <div class="card-header flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+        <div class="logo-container flex-shrink-0 mb-2 sm:mb-0 sm:mr-4">
+          <img class="h-6 sm:h-8 w-auto" src="~/assets/img/techhub logo.png" alt="TechHub Logo" />
+        </div>
+        <div class="text-right sm:text-right flex-1">
+          <h3 class="text-sm sm:text-base font-bold text-blue-600 whitespace-nowrap">MEMBERSHIP CARD</h3>
+          <p class="text-gray-500 text-xs sm:text-sm">Valid until {{ formatDate(expiry) }}</p>
+        </div>
+      </div>
 
-        <!-- Virtual Card Preview -->
-        <div ref="cardElement" class="card-preview  border rounded-lg w-full md:w-[650px] shadow-lg p-6 mb-6">
-            <!-- Card Header -->
-            <div class="card-header flex justify-between items-start mb-4">
-                <div class="logo-container flex-shrink-0 mr-4" style="min-width: 120px;">
-                <img class="w-auto h-6 md:h-8 " src="~/assets/img/techhub logo.png" alt="TechHub Logo"
-                        style="display: block; max-height: 32px;" />
-                </div>
-                <div class="text-right flex-1">
-                    <h3 class="text-xs md:text-md pb-1 font-bold text-blue-600 whitespace-nowrap">MEMBERSHIP CARD</h3>
-                    <p class="text-gray-500 text-xs">Valid until {{ formatDate(expiry) }}</p>
-                </div>
-            </div>
+      <!-- Card Body -->
+      <div class="card-body flex flex-col sm:flex-row">
+        <!-- User Info -->
+        <div class="user-info flex-1">
+          <p class="text-xs sm:text-sm text-gray-500 mb-1">Member</p>
+          <h4 class="text-lg sm:text-xl font-bold mb-3">{{ user.name }}</h4>
 
-            <!-- Card Body -->
-            <div class="card-body flex">
-                <!-- User Info -->
-                <div class="user-info flex-1">
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Member</p>
-                    <h4 class="md:text-xl font-bold mb-3">{{ user.name }}</h4>
+          <p class="text-xs sm:text-sm text-gray-500 mb-1">Member ID</p>
+          <p class="font-mono font-medium mb-3">{{ user.uniqueId }}</p>
 
-                    <p class="text-xs md:text-sm text-gray-500 mb-1">Member ID</p>
-                    <p class="font-mono font-medium mb-3">{{ user.uniqueId }}</p>
-
-                    <p class="md:text-sm text-gray-500 mb-1">Membership Type</p>
-                    <p class="font-medium text-blue-600 capitalize mb-3">{{ user.membershipType }}</p>
-                </div>
-
-                <!-- User Picture -->
-                <div class="user-picture-container flex flex-col items-end ml-4 mt-4">
-                    <div class="user-picture-wrapper border p-2 bg-white rounded">
-                        <img :src="user.profilePicture" alt="Member Picture"
-                            class="w-20 h-20 md:w-24 md:h-24 object-cover rounded" />
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2 text-center">Passport</p>
-                </div>
-            </div>
-
-                        <qr-code-maker :userId="user._id" />
-
-
-            <!-- Card Footer -->
-            <div class="card-footer mt-4 pt-4 border-t text-center text-xs text-gray-500">
-                <p>This virtual card is the property of {{ companyName }}</p>
-                <p>For support: {{ supportEmail }} | {{ supportPhone }}</p>
-            </div>
+          <p class="text-xs sm:text-sm text-gray-500 mb-1">Membership Type</p>
+          <p class="font-medium text-blue-600 capitalize mb-3">{{ user.membershipType }}</p>
         </div>
 
-
-
-        <!-- Actions -->
-        <div class="card-actions flex justify-center space-x-4">
-            <button @click="downloadCard"
-            class="download-btn bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Download Card
-            </button>
-            
-            <button @click="shareCard"
-            class="share-btn bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-            </svg>
-            Share Card
-            </button>
-
-           
+        <!-- User Picture / QR -->
+        <div class="user-picture-container flex flex-col items-center sm:items-end mt-4 sm:mt-0 sm:ml-4">
+          <div class="user-picture-wrapper border p-2 bg-white rounded">
+            <!-- Replace with actual image if needed -->
+            <qr-code-maker :userId="user._id" />
+          </div>
+          <p class="text-xs text-gray-500 mt-2 text-center">Passport</p>
         </div>
+      </div>
+
+      <!-- Card Footer -->
+      <div class="card-footer mt-6 pt-4 border-t text-center text-xs text-gray-500 space-y-1">
+        <p>This virtual card is the property of {{ companyName }}</p>
+        <p>For support: {{ supportEmail }} | {{ supportPhone }}</p>
+      </div>
     </div>
+
+    <!-- Actions -->
+    <div class="card-actions flex flex-col sm:flex-row justify-center gap-4 w-full max-w-[650px]">
+      <button
+        @click="downloadCard"
+        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center justify-center"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        Download Card
+      </button>
+
+      <button
+        @click="shareCard"
+        class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded flex items-center justify-center"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+        </svg>
+        Share Card
+      </button>
+    </div>
+  </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -147,7 +144,6 @@ const companyName = 'TechhubEksu';
 const supportEmail = 'techhubeksu@gmail.com';
 const supportPhone = '+234 815 9360 009';
 
-console.log(expiry);
 // Format date to human-readable format
 const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -158,24 +154,24 @@ const formatDate = (date) => {
 };
 
 // Fetch QR code from API
-const fetchQrCode = async () => {
-    try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error('No token found');
-        }
+// const fetchQrCode = async () => {
+//     try {
+//         const token = localStorage.getItem('token');
+//         if (!token) {
+//             throw new Error('No token found');
+//         }
 
-        const response = await axios.get('https://techhub-eksu.onrender.com/api/users/qrcode', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+//         const response = await axios.get('https://techhub-eksu.onrender.com/api/users/qrcode', {
+//             headers: {
+//                 Authorization: `Bearer ${token}`
+//             }
+//         });
 
-        qrCodeUrl.value = response.data.qrCode;
-    } catch (error) {
-        console.error('Error fetching QR code:', error);
-    }
-};
+//         qrCodeUrl.value = response.data.qrCode;
+//     } catch (error) {
+//         console.error('Error fetching QR code:', error);
+//     }
+// };
 
 // Download card as image using dom-to-image
 // Download card as image using dom-to-image
@@ -259,9 +255,9 @@ const shareCard = async () => {
 };
 
 // Lifecycle hooks
-onMounted(() => {
-    fetchQrCode();
-});
+// onMounted(() => {
+//      fetchQrCode();
+// });
 </script>
 
 <style scoped>

@@ -4,8 +4,18 @@ import { useUserStore } from '@/store/user';
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // Skip middleware on server
   if (process.server) return;
-  
-  const userStore = useUserStore();
+
+ const userStore = useUserStore()
+
+  // Check if user is already loaded
+  if (!userStore.user) {
+    await userStore.fetchProfile()
+  }
+
+  // If still not authenticated, redirect to login
+  if (!userStore.isAuthenticated) {
+    return navigateTo('/login')
+  }
   
   // Only fetch profile if we don't have a user yet or we're coming from certain pages
   // that might have updated user state (like payment or onboarding)
@@ -55,20 +65,23 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   // Admin redirection
-  if (
-    userStore.isAuthenticated && 
-    userStore.isAdmin && 
-    to.path !== '/admin'
-  ) {
-    return navigateTo('/admin');
-  }
+// Redirect authenticated admin users to /admin if they’re trying to access non-admin areas
+if (
+  userStore.isAuthenticated && 
+  userStore.isAdmin && 
+  !to.path.startsWith('/admin') && 
+  ['/login', '/register', '/dashboard'].includes(to.path)
+) {
+  return navigateTo('/admin');
+}
 
-  // Prevent non-admin from accessing admin
-  if (
-    userStore.isAuthenticated && 
-    !userStore.isAdmin && 
-    to.path === '/admin'
-  ) {
-    return navigateTo('/dashboard');
-  }
+// Prevent non-admins from accessing any admin route
+if (
+  userStore.isAuthenticated && 
+  !userStore.isAdmin && 
+  to.path.startsWith('/admin')
+) {
+  return navigateTo('/dashboard');
+}
+
 });

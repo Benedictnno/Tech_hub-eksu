@@ -35,5 +35,7 @@
 import metricTableVue from '~/components/metricTable.vue'
 import metricCardListing from '../../components/metricCardListing.vue'
 import QrScanner from '../components/QrScanner.vue'
-
+definePageMeta({
+  middleware: 'auth'
+})
 </script>

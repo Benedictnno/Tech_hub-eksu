@@ -76,6 +76,10 @@
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
   
+  definePageMeta({
+  middleware: 'auth'
+ })
+
   const isActive = ref(false)
   const sessions = ref([])
   const startDate = ref('')
@@ -85,6 +89,8 @@
   
   const API_BASE = 'http://localhost:5000/api/admin' // Change this if deployed
   
+
+
   const fetchSessions = async () => {
     try {
       const res = await axios.get(`${API_BASE}/sessions`)

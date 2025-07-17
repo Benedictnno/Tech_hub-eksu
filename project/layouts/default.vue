@@ -6,7 +6,11 @@
           <div class="flex">
             <div class="flex-shrink-0 flex items-center">
               <div class="flex items-center flex-shrink-0">
-                <img class="w-auto h-8 mt-2" src="~/assets/img/techhub logo.png" alt="" />
+              <NuxtLink to="/dashboard">
+                            <img class="w-auto h-8 mt-2" src="~/assets/img/techhub logo.png" alt="" />
+
+          </NuxtLink>
+          
 
               </div>
             </div>
