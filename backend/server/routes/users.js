@@ -79,7 +79,6 @@ router.put("/profile", protect, async (req, res) => {
 router.get("/current-user", protect, async (req, res) => {
   try {
 
-    
     const user = await User.findById(req.user._id).select("-password");
 
     if (user) {

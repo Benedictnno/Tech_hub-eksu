@@ -28,7 +28,7 @@
           </div>
         </div> -->
           <div class="mt-4">
-             <NuxtLink to="/profile" v-if="userRole === 'admin'" class="px-5 py-2 bg-blue-100 text-green-800 rounded-md text-lg">
+             <NuxtLink to="/admin" v-if="userRole === 'admin'" class="px-5 py-2 bg-blue-100 text-green-800 rounded-md text-lg">
              Admin
              </NuxtLink>
       
