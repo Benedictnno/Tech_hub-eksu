@@ -23,10 +23,22 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://yourfrontenddomain.com"
+];
+
 app.use(cors({
-  origin: ['http://localhost:3000/'], // or just: origin
-  credentials: true, // if you need to allow cookies/headers
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
 }));
+
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
