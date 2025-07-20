@@ -24,7 +24,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['https://tech-hub-eksu.onrender.com'], // or just: origin
+  origin: ['http://localhost:3000/'], // or just: origin
   credentials: true, // if you need to allow cookies/headers
 }));
 
