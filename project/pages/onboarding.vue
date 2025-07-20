@@ -215,7 +215,7 @@ import { ref, reactive, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
-
+const config = useRuntimeConfig();
 const router = useRouter();
 const imagePreview = ref(null);
 const uploadStatus = ref('');
@@ -354,7 +354,7 @@ const completeOnboarding = async () => {
       throw new Error('Authentication token not found');
     }
 
-    const response = await axios.put('http://localhost:5000/api/users/profile', {
+    const response = await axios.put(`${config.public.URL}/api/users/profile`, {
       matric: form.matricNumber,
       department: form.department,
       level: form.level,

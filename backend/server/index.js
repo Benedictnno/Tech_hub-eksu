@@ -23,7 +23,10 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+  origin: ['https://tech-hub-eksu.onrender.com'], // or just: origin
+  credentials: true, // if you need to allow cookies/headers
+}));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)

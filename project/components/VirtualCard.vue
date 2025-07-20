@@ -80,7 +80,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import domtoimage from 'dom-to-image';
-
+const config = useRuntimeConfig();
 // Props
 const props = defineProps({
     membershipExpiry: {
@@ -102,7 +102,7 @@ const fetchUserProfile = async () => {
             throw new Error('No token found');
         }
         
-        const response = await axios.get('http://localhost:5000/api/users/profile', {
+        const response = await axios.get(`${config.public.URL}/api/users/profile`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -118,7 +118,7 @@ const fetchUserProfile = async () => {
 const endOfSession = async () => {
     try {
       
-        const response = await axios.get('http://localhost:5000/api/users/start-of-current-session');
+        const response = await axios.get(`${config.public.URL}/api/users/start-of-current-session`);
         
         expiry.value = response.data.data.endDate;
         console.log(response.data.data.endDate);

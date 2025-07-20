@@ -33,7 +33,9 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      SECRET_KEY: process.env.NUXT_PUBLIC_KEY
+      SECRET_KEY: process.env.NUXT_PUBLIC_KEY,
+      URL: process.env.BAESE_URL,
+
     },
    
   }

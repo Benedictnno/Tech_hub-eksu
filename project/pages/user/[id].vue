@@ -33,7 +33,7 @@
 import { useRoute } from 'vue-router'
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
-
+const config = useRuntimeConfig();
 const route = useRoute()
 const user = ref(null)
 const startDate = ref(null)
@@ -59,8 +59,8 @@ const formatDate = (date) =>
 
 onMounted(async () => {
   try {
-    const { data: userData } = await axios.get(`http://localhost:5000/api/users/${route.params.id}`);
-    const { data: sessionData } = await axios.get(`http://localhost:5000/api/users/start-of-current-session`);
+    const { data: userData } = await axios.get(`${config.public.URL}/api/users/${route.params.id}`);
+    const { data: sessionData } = await axios.get(`${config.public.URL}/api/users/start-of-current-session`);
 
     if (userData && sessionData) {
       user.value = userData;
@@ -68,7 +68,7 @@ onMounted(async () => {
 
   if (user.value?.uniqueId) {
   try {
-    const { data: attendanceRes } = await axios.post(`http://localhost:5000/api/attendance/checkin`, {
+    const { data: attendanceRes } = await axios.post(`${config.public.URL}/api/attendance/checkin`, {
       id: route.params.id,
       uniqueId: user.value.uniqueId
     })

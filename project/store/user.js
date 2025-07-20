@@ -1,6 +1,6 @@
 // stores/user.js
 import { defineStore } from 'pinia'
-
+const config = useRuntimeConfig();
 export const useUserStore = defineStore('user', {
   state: () => ({
     user: null,
@@ -28,7 +28,7 @@ export const useUserStore = defineStore('user', {
           return null;
         }
 
-        const response = await fetch('http://localhost:5000/api/users/profile', {
+        const response = await fetch(`${config.public.URL}/api/users/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

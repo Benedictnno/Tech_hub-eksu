@@ -75,7 +75,7 @@
   <script setup>
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
-  
+  const config = useRuntimeConfig();
   definePageMeta({
   middleware: 'auth'
  })
@@ -87,7 +87,7 @@
   const selectedSessionId = ref(null)
   const isEditing = ref(false)
   
-  const API_BASE = 'http://localhost:5000/api/admin' // Change this if deployed
+  const API_BASE = `${config.public.URL}/api/admin `// Change this if deployed
   
 
 

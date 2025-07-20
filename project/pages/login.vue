@@ -74,13 +74,15 @@ import { toast } from 'vue3-toastify'
 import { useRouter } from 'vue-router'
 import { z } from 'zod'
 import { ref, reactive } from 'vue'
-
+const config = useRuntimeConfig();
 const router = useRouter()
 
 const form = reactive({
   email: '',
   password: ''
 })
+
+
 
 const errors = reactive({
   email: '',
@@ -102,7 +104,7 @@ const login = async () => {
   try {
     schema.parse(form)
 
-    const response = await axios.post('http://localhost:5000/api/auth/login', form)
+    const response = await axios.post(`${config.public.URL}/api/auth/login`, form)
     const user = response.data
     const token = user.token
 

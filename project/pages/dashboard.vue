@@ -350,6 +350,7 @@
 
 <script setup>
 import axios from 'axios';
+const config = useRuntimeConfig();
 
 const router = useRouter();
 const user = ref(null);
@@ -375,7 +376,7 @@ onMounted(async() => {
             throw new Error('No token found');
         }
 
-        const response = await axios.get('http://localhost:5000/api/users/current-user', {
+        const response = await axios.get(`${config.public.URL}/api/users/current-user`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

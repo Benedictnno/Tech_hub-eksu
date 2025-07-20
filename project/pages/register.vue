@@ -73,7 +73,7 @@
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { z } from 'zod';
-
+const config = useRuntimeConfig();
 const router = useRouter();
 const form = reactive({
   name: '',
@@ -119,7 +119,7 @@ const register = async () => {
     schema.parse(form);
 
     // Send data to API
-    const response = await axios.post('http://localhost:5000/api/auth/register', form, {
+    const response = await axios.post(`${config.public.URL}/api/auth/register`, form, {
       headers: {
         'Content-Type': 'application/json'
       }
