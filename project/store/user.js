@@ -31,7 +31,10 @@ export const useUserStore = defineStore('user', {
         const response = await fetch(`${config.public.URL}/api/users/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`
-          }
+          },
+          
+  withCredentials: true, // if you use cookies or sessions
+
         });
 
         if (response.ok) {

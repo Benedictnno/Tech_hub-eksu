@@ -59,8 +59,12 @@ const formatDate = (date) =>
 
 onMounted(async () => {
   try {
-    const { data: userData } = await axios.get(`${config.public.URL}/api/users/${route.params.id}`);
-    const { data: sessionData } = await axios.get(`${config.public.URL}/api/users/start-of-current-session`);
+    const { data: userData } = await axios.get(`${config.public.URL}/api/users/${route.params.id}`, {
+  withCredentials: true, // if you use cookies or sessions
+});
+    const { data: sessionData } = await axios.get(`${config.public.URL}/api/users/start-of-current-session`, {
+  withCredentials: true, // if you use cookies or sessions
+});
 
     if (userData && sessionData) {
       user.value = userData;
@@ -71,7 +75,9 @@ onMounted(async () => {
     const { data: attendanceRes } = await axios.post(`${config.public.URL}/api/attendance/checkin`, {
       id: route.params.id,
       uniqueId: user.value.uniqueId
-    })
+    }, {
+  withCredentials: true, // if you use cookies or sessions
+  })
 
     console.log(attendanceRes.message) // ✅ this is fine
   } catch (err) {

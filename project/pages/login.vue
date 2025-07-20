@@ -104,7 +104,9 @@ const login = async () => {
   try {
     schema.parse(form)
 
-    const response = await axios.post(`${config.public.URL}/api/auth/login`, form)
+    const response = await axios.post(`${config.public.URL}/api/auth/login`, form, {
+  withCredentials: true, // if you use cookies or sessions
+})
     const user = response.data
     const token = user.token
 

@@ -32,6 +32,7 @@ export default {
         const config = useRuntimeConfig();
 
 
+
         const makePayment = async () => {
             try {
                 const token = localStorage.getItem('token');
@@ -56,11 +57,13 @@ export default {
         };
 
         const initiatePaystackPayment = async () => {
+            
+            
             if (!import.meta.env.SSR) {
                 const PaystackPop = window.PaystackPop;
 
                 const handler = PaystackPop.setup({
-                    key: "pk_test_d966b8cb99e3637888a2f6843546298b65a629f6",
+                    key: config.public.PAYSTACK,
                     email: props.email,
                     amount: props.amount * 100,
                     callback: () => {

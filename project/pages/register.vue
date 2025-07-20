@@ -122,7 +122,9 @@ const register = async () => {
     const response = await axios.post(`${config.public.URL}/api/auth/register`, form, {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+  withCredentials: true, // if you use cookies or sessions
+
     });
 
     const data = response.data;

@@ -380,6 +380,9 @@ onMounted(async() => {
             headers: {
                 Authorization: `Bearer ${token}`
             }
+            , 
+  withCredentials: true, 
+
         });
         
 

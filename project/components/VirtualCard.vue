@@ -106,6 +106,9 @@ const fetchUserProfile = async () => {
             headers: {
                 Authorization: `Bearer ${token}`
             }
+            , 
+  withCredentials: true, // if you use cookies or sessions
+
         });
         
         user.value = response.data;

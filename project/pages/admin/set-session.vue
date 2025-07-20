@@ -113,7 +113,9 @@
           endDate: endDate.value,
           isActive: isActive.value
 
-        })
+        }, {
+  withCredentials: true, // if you use cookies or sessions
+})
       } else {
         await axios.post(`${API_BASE}/set-session`, {
           startDate: startDate.value,

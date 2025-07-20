@@ -368,6 +368,9 @@ const completeOnboarding = async () => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       }
+      ,
+  withCredentials: true, // if you use cookies or sessions
+
     });
 
     console.log('User updated:', response.data);
