@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+     "build": "npm install",
     "start": "node server/index.js",
     "dev": "nodemon server/index.js",
     "lint": "eslint ."
@@ -22,5 +23,8 @@
   "devDependencies": {
     "eslint": "^9.9.1",
     "nodemon": "^3.1.0"
-  }
+  },
+  "engines": {
+  "node": "18.x"
+}
 }

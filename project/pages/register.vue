@@ -8,7 +8,7 @@
           <p class="text-gray-600 mt-2">Join the Campus TechHub community</p>
         </div>
 
-        <form class="space-y-6">
+        <form  @submit.prevent="register" class="space-y-6">
           <div>
             <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
             <input id="name" v-model="form.name" type="text" required
@@ -40,7 +40,7 @@
           </div>
 
           <div>
-            <button @click="register"
+            <button
               class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               :disabled="isSubmitting">
               <span v-if="isSubmitting">Processing...</span>

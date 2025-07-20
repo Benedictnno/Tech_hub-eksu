@@ -26,7 +26,7 @@
             </div>
 
             <!-- Session Plan -->
-            <div class="border rounded-lg p-4 cursor-pointer transition-all"
+            <!-- <div class="border rounded-lg p-4 cursor-pointer transition-all"
               :class="selectedPlan === 'session' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-primary-300'"
               @click="selectPlan('session')">
               <div class="flex justify-between items-center">
@@ -36,7 +36,7 @@
                 </div>
                 <div class="text-lg font-bold text-primary-600">₦2,000</div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -123,6 +123,8 @@ const planAmount = computed(() => {
 
 // Computed property for plan name
 const planName = computed(() => {
-  return selectedPlan.value === 'semester' ? 'semester' : 'session';
+  return selectedPlan.value === 'semester'
 });
+
+//  ? 'semester' : 'session';
 </script>
