@@ -129,8 +129,6 @@ const register = async () => {
 
     const data = response.data;
 
-    console.log("User:", data);
-
     // Store token in localStorage
     localStorage.setItem('token', data.token);
     // Store user data (in a real app, this would be a JWT token or similar)
