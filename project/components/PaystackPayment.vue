@@ -12,6 +12,7 @@ import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 
 
+
 export default {
     props: {
         amount: {
@@ -27,6 +28,7 @@ export default {
             required: true
         }
     },
+    
     setup(props) {
         const router = useRouter();
         const config = useRuntimeConfig();
@@ -40,7 +42,7 @@ export default {
                     throw new Error('No token found');
                 }
 
-                const response = await axios.post('http://localhost:5000/api/users/make-payment', {
+                const response = await axios.post(`${config.public.URL}/api/users/make-payment`, {
                     subscriptionType: props.subscriptionType,
                 }, {
                     headers: {
