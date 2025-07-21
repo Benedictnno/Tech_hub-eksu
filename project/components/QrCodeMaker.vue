@@ -7,6 +7,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import QRCode from 'qrcode'
+const config = useRuntimeConfig();
 
 const props = defineProps({
   userId: {
