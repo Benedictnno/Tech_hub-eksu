@@ -20,7 +20,7 @@ console.log(props.userId);
 const qrCanvas = ref(null)
 
 onMounted(() => {
-  const url = `https://1rz2s40q-3000.euw.devtunnels.ms/user/${props.userId}`
+  const url = `${config.public.URL}/user/${props.userId}`
   QRCode.toCanvas(qrCanvas.value, url, { width: 200 }, (error) => {
     if (error) console.error(error)
   })
