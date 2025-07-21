@@ -87,7 +87,7 @@
   const selectedSessionId = ref(null)
   const isEditing = ref(false)
   
-  const API_BASE = `${config.public.URL}/api/admin `// Change this if deployed
+  const API_BASE = `${config.public.URL}/api/admin`// Change this if deployed
   
 
 
