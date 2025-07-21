@@ -24,7 +24,7 @@ const qrCanvas = ref(null)
 
 // Function to generate QR code
 function generateQRCode() {
-  const url = `${config.public.URL}/user/${props.userId}`
+  const url = `https://tech-hub-eksu.vercel.app/user/${props.userId}`
   // console.log("Generating QR for:", url)
 
   if (!qrCanvas.value) {
