@@ -12,13 +12,15 @@ router.post('/checkin', verifyEligibility, async (req, res) => {
   try {
     const { uniqueId } = req.body;
 
-    if (!uniqueId) {
-      return res.status(400).json({ message: 'Unique ID is required' });
+    // Validate input
+    if (!uniqueId || typeof uniqueId !== 'string') {
+      return res.status(400).json({ message: 'Unique ID is required and must be a string' });
     }
 
+    // Find user by unique ID
     const user = await User.findOne({ uniqueId });
-
     if (!user) {
+      console.warn(`Check-in failed: No user found with uniqueId "${uniqueId}"`);
       return res.status(404).json({ message: 'User not found' });
     }
 
@@ -27,9 +29,11 @@ router.post('/checkin', verifyEligibility, async (req, res) => {
       user.attendance = [];
     }
 
+    // Normalize today's date (00:00:00)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    // Check if already checked in today
     const alreadyCheckedIn = user.attendance.some((a) => {
       if (!a.date || !a.checkIn) return false;
       const attendanceDate = new Date(a.date);
@@ -38,28 +42,35 @@ router.post('/checkin', verifyEligibility, async (req, res) => {
     });
 
     if (alreadyCheckedIn) {
-      return res.status(400).json({ message: 'Already checked in today' });
+      return res.status(409).json({ message: 'Already checked in today' });
     }
 
+    // Record check-in
     const now = new Date();
-    user.attendance.push({
+    const attendanceRecord = {
       date: now,
       checkIn: now,
       checkOut: null
-    });
+    };
 
+    user.attendance.push(attendanceRecord);
     await user.save();
 
-    res.json({
+    console.log(`✅ User ${user.name} (${uniqueId}) checked in at ${now.toISOString()}`);
+
+    // ✅ Move this into the try block and fix typo
+    return res.status(200).json({
       message: 'Check-in successful',
-      checkInTime: now
+      checkInTime: now,
+      userId: user._id,
+      attendance: attendanceRecord
     });
+
   } catch (error) {
-    console.error('Check-in failed:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('🚨 Server error during check-in:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 });
-
 
 
 router.get('/total-checkedin', protect, async (req, res) => {

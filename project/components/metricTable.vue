@@ -38,14 +38,14 @@
           <tr v-for="(item, index) in filteredData" :key="item.id" class="bg-white text-gray-700 border-b">
             <!-- Reduce padding for <td> elements and apply text-overflow handling -->
             <td class="px-4 py-6 truncate">{{ index + 1 }}</td>
-            <td class="px-4 py-6 truncate font-bold">{{ item.username }}</td>
+            <td class="px-4 py-6 truncate font-bold">{{ item.name }}</td>
             <td class="px-4 py-6 truncate">{{ item.email }}</td>
             <td class="px-4 py-6 truncate">
               {{ new Date(item.checkInTime).toLocaleString() }}
             </td>
             <td class="px-4 py-2">
-              <span v-if="item.checkedIn" class="text-green-300 font-semibold">Checked In</span>
-              <span v-else class="text-red-500">Checked Out</span>
+              <span class="text-green-300 font-semibold">Checked In</span>
+              <!-- <span v-else class="text-red-500">Checked Out</span> -->
             </td>
             <td class="px-4 py-2">
               <button v-if="item.checkedIn" @click="checkOut(item.uniqueId)"
