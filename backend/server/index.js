@@ -39,7 +39,6 @@ app.use(cors({
   credentials: true,
 }));
 
-
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
@@ -70,11 +69,14 @@ cron.schedule('0 18 * * *', async () => {
   try {
     const date = new Date();
     date.setHours(0, 0, 0, 0);
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDate() + 1);
     
     // Find all users who checked in today but haven't checked out
+    // Use date range to match attendance.date stored as midnight
     const result = await User.updateMany(
       { 
-        'attendance.date': date,
+        'attendance.date': { $gte: date, $lt: nextDay },
         'attendance.checkIn': { $ne: null },
         'attendance.checkOut': null
       },
