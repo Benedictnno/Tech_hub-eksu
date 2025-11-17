@@ -218,7 +218,7 @@ router.get("/attendance", protect, admin, async (req, res) => {
 });
 
 // CREATE Session
-router.post("/set-session", async (req, res) => {
+router.post("/set-session", protect, admin, async (req, res) => {
   const { startDate, endDate, isActive } = req.body;
 
   if (!startDate || !endDate)
@@ -238,7 +238,7 @@ router.post("/set-session", async (req, res) => {
 });
 
 // GET All Sessions
-router.get("/sessions", async (req, res) => {
+router.get("/sessions", protect, admin, async (req, res) => {
   try {
     const sessions = await Session.find().sort({ createdAt: -1 });
     res.json(sessions);
@@ -248,7 +248,7 @@ router.get("/sessions", async (req, res) => {
 });
 
 // UPDATE a Session
-router.put("/update-session/:id", async (req, res) => {
+router.put("/update-session/:id", protect, admin, async (req, res) => {
   const { id } = req.params;
   const { startDate, endDate, isActive } = req.body;
 
@@ -270,7 +270,7 @@ router.put("/update-session/:id", async (req, res) => {
 });
 
 // DELETE a Session
-router.delete("/delete-session/:id", async (req, res) => {
+router.delete("/delete-session/:id", protect, admin, async (req, res) => {
   const { id } = req.params;
 
   try {
