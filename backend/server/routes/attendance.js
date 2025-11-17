@@ -6,9 +6,9 @@ const router = express.Router();
 
 // @route   POST /api/attendance/checkin
 // @desc    User self check-in
-// @access  Private
+// @access  Public (uses uniqueId)
 
-router.post('/checkin', verifyEligibility, async (req, res) => {
+router.post('/checkin', async (req, res) => {
   try {
     const { uniqueId } = req.body;
 
@@ -24,13 +24,31 @@ router.post('/checkin', verifyEligibility, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Verify user eligibility inline (because this endpoint uses uniqueId rather than authenticated req.user)
+    if (!user.isRegistered || !user.hasPaid || !user.isOnboarded) {
+      return res.status(403).json({
+        message: 'User is not eligible for check-in',
+        isRegistered: user.isRegistered,
+        hasPaid: user.hasPaid,
+        isOnboarded: user.isOnboarded,
+      });
+    }
+
+    if (!user.hasActiveSubscription()) {
+      return res.status(403).json({
+        message: 'User subscription has expired',
+        subscription: user.subscription,
+      });
+    }
+
     // Ensure attendance array exists
     if (!Array.isArray(user.attendance)) {
       user.attendance = [];
     }
 
-    // Normalize today's date (00:00:00)
-    const today = new Date();
+    // Normalize today's date (00:00:00) for the date field
+    const now = new Date();
+    const today = new Date(now);
     today.setHours(0, 0, 0, 0);
 
     // Check if already checked in today
@@ -45,10 +63,9 @@ router.post('/checkin', verifyEligibility, async (req, res) => {
       return res.status(409).json({ message: 'Already checked in today' });
     }
 
-    // Record check-in
-    const now = new Date();
+    // Record check-in - store date as midnight (for queries) but keep exact checkIn timestamp
     const attendanceRecord = {
-      date: now,
+      date: today,
       checkIn: now,
       checkOut: null
     };
@@ -58,7 +75,6 @@ router.post('/checkin', verifyEligibility, async (req, res) => {
 
     console.log(`✅ User ${user.name} (${uniqueId}) checked in at ${now.toISOString()}`);
 
-    // ✅ Move this into the try block and fix typo
     return res.status(200).json({
       message: 'Check-in successful',
       checkInTime: now,
