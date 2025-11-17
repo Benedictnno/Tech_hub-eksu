@@ -1,4 +1,5 @@
-import jwt from 'jsonwebtoken';
+    
+    import jwt from 'jsonwebtoken';
 import User from '../models/User.js'; // adjust path as needed
 
 export const protect = async (req, res, next) => {
@@ -44,11 +45,20 @@ export const admin = (req, res, next) => {
 };
 
 export const verifyEligibility = async (req, res, next) => {
- 
-  
   try {
-    const user = await User.findById(req.body.id);
-    
+    // Prefer req.user (set by protect) but fall back to req.body.id
+    const id = req.user?._id || req.body?.id;
+
+    if (!id) {
+      return res.status(400).json({ message: 'User id is required for eligibility check' });
+    }
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     if (!user.isRegistered || !user.hasPaid || !user.isOnboarded) {
       return res.status(403).json({ 
         message: 'You are not eligible to access this resource',
@@ -57,14 +67,14 @@ export const verifyEligibility = async (req, res, next) => {
         isOnboarded: user.isOnboarded
       });
     }
-    
+
     if (!user.hasActiveSubscription()) {
       return res.status(403).json({ 
         message: 'Your subscription has expired',
         subscription: user.subscription
       });
     }
-    
+
     next();
   } catch (error) {
     console.error(error);
