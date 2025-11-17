@@ -64,11 +64,11 @@ router.post("/login", async (req, res) => {
     }
 
     // Check if password matches
-    // const isMatch = await user.comparePassword(password);
+    const isMatch = await user.comparePassword(password);
 
-    // if (!isMatch) {
-    //   return res.status(401).json({ message: 'Invalid email or password' });
-    // }
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
     res.json({
       _id: user._id,
