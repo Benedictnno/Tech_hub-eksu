@@ -121,7 +121,56 @@ const userSchema = new mongoose.Schema(
       ref: "Session",
      
     },
-
+    profession: {
+      type: String,
+    },
+    programType: {
+      type: String,
+      enum: ["Fellowship", "Pre-Fellowship"],
+    },
+    accountStatus: {
+      type: String,
+      enum: ["Pending Payment", "Active", "Suspended"],
+      default: "Pending Payment",
+    },
+    registrationToken: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    tokenExpiresAt: {
+      type: Date,
+    },
+    tokenUsed: {
+      type: Boolean,
+      default: false,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Failed"],
+      default: "Pending",
+    },
+    paymentReference: {
+      type: String,
+    },
+    createdByAdmin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profiles",
+    },
+    firstLogin: {
+      type: Boolean,
+      default: true,
+    },
+    onboardingCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
     createdAt: {
       type: Date,
       default: Date.now,

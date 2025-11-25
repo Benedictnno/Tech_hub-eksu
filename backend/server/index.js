@@ -12,6 +12,7 @@ import adminRoutes from './routes/admin.js';
 import reservationRoutes from './routes/reservations.js';
 import blogRoutes from './routes/blog.js';
 import galleryRoutes from './routes/gallery.js';
+import registrationRoutes from './routes/registration.js';
 
 // Import models
 import User from './models/User.js';
@@ -64,6 +65,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/gallery', galleryRoutes);
+app.use('/api/registration', registrationRoutes);
 
 // Root route
 app.get('/', (req, res) => {
