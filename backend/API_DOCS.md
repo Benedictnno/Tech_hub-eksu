@@ -391,7 +391,7 @@ _All require `protect` + `admin`._
     - `registrationToken` + `tokenExpiresAt` (7 days default).
     - `firstLogin = true`, `onboardingCompleted = false`.
   - Sends registration email:
-    - Link: `APP_PUBLIC_URL/register/:registrationToken`
+    - Link: `APP_PUBLIC_URL/registration/:registrationToken`
     - Includes fee and expiry info.
 - **Response 201**:
 
@@ -889,3 +889,57 @@ await fetch('/api/users/profile', {
   }),
 });
 ```
+
+---
+
+### 4.9 Ecommerce – Product Management (`/api/products`)
+
+#### 4.9.1 `GET /api/products`
+
+- **Auth**: Public
+- **Description**: List products with filtering and pagination.
+- **Query parameters** (all optional):
+  - `category`: Filter by product category.
+  - `tags`: Comma-separated tags (e.g., `featured,new`). Matches any.
+  - `minPrice`: Filter by minimum price.
+  - `maxPrice`: Filter by maximum price.
+  - `search`: Search in name and description (regex).
+  - `status`: Filter by status (`available` by default).
+  - `page`: Page number (default 1).
+  - `limit`: Items per page (default 10).
+  - `sort`: Sorting field (default `-createdAt`).
+
+#### 4.9.2 `GET /api/products/:id`
+
+- **Auth**: Public
+- **Description**: Get a single product by ID or Slug.
+
+#### 4.9.3 `POST /api/products`
+
+- **Auth**: `protect` + `admin`
+- **Description**: Create a new product.
+- **Body**:
+```json
+{
+  "name": "string",
+  "description": "string",
+  "price": number,
+  "category": "string",
+  "tags": ["string"],
+  "images": [
+    { "url": "string", "publicId": "string" }
+  ],
+  "stock": number,
+  "status": "draft" | "available" | "out_of_stock" | "discontinued"
+}
+```
+
+#### 4.9.4 `PUT /api/products/:id`
+
+- **Auth**: `protect` + `admin`
+- **Description**: Update an existing product.
+
+#### 4.9.5 `DELETE /api/products/:id`
+
+- **Auth**: `protect` + `admin`
+- **Description**: Delete a product and its associated Cloudinary images.

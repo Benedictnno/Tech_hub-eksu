@@ -58,7 +58,7 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
     });
 
     const baseUrl = APP_PUBLIC_URL.replace(/\/$/, "");
-    const registrationLink = `${baseUrl}/register/${token}`;
+    const registrationLink = `${baseUrl}/registration/${token}`;
 
     const subject = "Welcome to TechHub Fellowship Program!";
     const html = `
@@ -171,7 +171,7 @@ router.post("/users/:id/resend-link", protect, admin, async (req, res) => {
     }
 
     const baseUrl = APP_PUBLIC_URL.replace(/\/$/, "");
-    const registrationLink = `${baseUrl}/register/${token}`;
+    const registrationLink = `${baseUrl}/registration/${token}`;
 
     const subject = "Welcome to TechHub Fellowship Program!";
     const html = `

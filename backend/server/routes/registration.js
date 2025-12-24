@@ -17,6 +17,7 @@ const validateToken = async (token) => {
   return { user };
 };
 
+
 router.get('/token/:token', async (req, res) => {
   try {
     const { token } = req.params;

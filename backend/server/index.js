@@ -13,6 +13,7 @@ import reservationRoutes from './routes/reservations.js';
 import blogRoutes from './routes/blog.js';
 import galleryRoutes from './routes/gallery.js';
 import registrationRoutes from './routes/registration.js';
+import productRoutes from './routes/products.js';
 
 // Import models
 import User from './models/User.js';
@@ -66,10 +67,11 @@ app.use('/api/reservations', reservationRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/registration', registrationRoutes);
+app.use('/api/products', productRoutes);
 
 // Root route
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'Attendance System API',
     version: '1.0.0',
     endpoints: {
@@ -92,23 +94,23 @@ cron.schedule('0 18 * * *', async () => {
     date.setHours(0, 0, 0, 0);
     const nextDay = new Date(date);
     nextDay.setDate(nextDay.getDate() + 1);
-    
+
     // Find all users who checked in today but haven't checked out
     // Use date range to match attendance.date stored as midnight
     const result = await User.updateMany(
-      { 
+      {
         'attendance.date': { $gte: date, $lt: nextDay },
         'attendance.checkIn': { $ne: null },
         'attendance.checkOut': null
       },
-      { 
-        $set: { 
+      {
+        $set: {
           'attendance.$.checkOut': new Date(),
           'attendance.$.autoCheckout': true
-        } 
+        }
       }
     );
-    
+
     console.log(`Auto checkout completed: ${result.modifiedCount} users checked out`);
   } catch (error) {
     console.error('Auto checkout error:', error);
