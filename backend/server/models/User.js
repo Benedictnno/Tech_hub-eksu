@@ -78,8 +78,9 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     subscription: subscriptionSchema,
-    attendance:{type: [attendanceSchema],
-    default: [] 
+    attendance: {
+      type: [attendanceSchema],
+      default: []
 
     },
     qrCode: {
@@ -97,6 +98,10 @@ const userSchema = new mongoose.Schema(
     membershipType: {
       type: String,
       // required: true
+    },
+    semestersPaid: {
+      type: Number,
+      default: 0,
     },
     department: {
       type: String,
@@ -119,7 +124,7 @@ const userSchema = new mongoose.Schema(
     sessionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Session",
-     
+
     },
     profession: {
       type: String,
@@ -202,7 +207,16 @@ userSchema.methods.hasActiveSubscription = function () {
   if (!this.subscription) return false;
 
   const now = new Date();
-  return this.subscription.active && now <= this.subscription.endDate;
+  // Check if current subscription is active and within date range
+  const isCurrentlyActive = this.subscription.active && now <= this.subscription.endDate;
+
+  // If not currently active, but the user has remaining paid semesters, 
+  // they are eligible for rollover (handled in check-in logic)
+  if (!isCurrentlyActive && this.semestersPaid > 0) {
+    return true;
+  }
+
+  return isCurrentlyActive;
 };
 
 userSchema.index({ 'attendance.date': 1 });

@@ -57,8 +57,9 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
       createdByAdmin: req.user._id,
     });
 
-    const baseUrl = APP_PUBLIC_URL.replace(/\/$/, "");
+    const baseUrl = process.env.APP_PUBLIC_URL.replace(/\/$/, "");
     const registrationLink = `${baseUrl}/registration/${token}`;
+
 
     const subject = "Welcome to TechHub Fellowship Program!";
     const html = `
@@ -170,7 +171,7 @@ router.post("/users/:id/resend-link", protect, admin, async (req, res) => {
       await user.save();
     }
 
-    const baseUrl = APP_PUBLIC_URL.replace(/\/$/, "");
+    const baseUrl = process.env.APP_PUBLIC_URL.replace(/\/$/, "");
     const registrationLink = `${baseUrl}/registration/${token}`;
 
     const subject = "Welcome to TechHub Fellowship Program!";
@@ -341,18 +342,38 @@ router.post("/checkin/:id", protect, admin, async (req, res) => {
       });
     }
 
-    // Check if user has active subscription
-    if (!user.hasActiveSubscription()) {
-      return res.status(403).json({
-        message: "User subscription has expired",
-        subscription: user.subscription,
-      });
+    const now = new Date();
+    const today = new Date(now);
+    today.setHours(0, 0, 0, 0);
+
+    // 1. Get active session for rollover check
+    const activeSession = await Session.findOne({ isActive: true });
+    if (!activeSession) {
+      return res.status(404).json({ message: "No active session found" });
+    }
+
+    // 2. Handle Roll-over logic
+    const currentSessionId = user.sessionId ? user.sessionId.toString() : null;
+    const activeSessionId = activeSession._id.toString();
+
+    if (currentSessionId !== activeSessionId) {
+      if (user.semestersPaid > 0) {
+        // Roll over to new session
+        user.sessionId = activeSession._id;
+        user.semestersPaid -= 1;
+        user.subscription.startDate = activeSession.startDate;
+        user.subscription.endDate = activeSession.endDate;
+        user.subscription.active = true;
+        await user.save();
+      } else if (!user.hasActiveSubscription()) {
+        return res.status(403).json({
+          message: "User subscription has expired",
+          subscription: user.subscription,
+        });
+      }
     }
 
     // Check if user already checked in today
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
     const todayAttendance = user.attendance.find((a) => {
       const attendanceDate = new Date(a.date);
       attendanceDate.setHours(0, 0, 0, 0);
@@ -366,7 +387,7 @@ router.post("/checkin/:id", protect, admin, async (req, res) => {
     // Add new attendance record
     user.attendance.push({
       date: today,
-      checkIn: new Date(),
+      checkIn: now,
       checkOut: null,
     });
 
@@ -376,7 +397,7 @@ router.post("/checkin/:id", protect, admin, async (req, res) => {
       message: "User check-in successful",
       userId: user._id,
       userName: user.name,
-      checkInTime: new Date(),
+      checkInTime: now,
     });
   } catch (error) {
     console.error(error);

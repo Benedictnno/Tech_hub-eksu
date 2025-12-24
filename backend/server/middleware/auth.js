@@ -1,12 +1,20 @@
-    
+
 // server/middleware/auth.js
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 export const protect = async (req, res, next) => {
   try {
-    // Get token from httpOnly cookie
-    const token = req.cookies.jwt;
+    let token;
+
+    // 1. Check cookies
+    if (req.cookies && req.cookies.jwt) {
+      token = req.cookies.jwt;
+    }
+    // 2. Fallback to Authorization header
+    else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
 
     if (!token) {
       return res.status(401).json({ message: 'Not authorized, no token' });
@@ -56,7 +64,7 @@ export const verifyEligibility = async (req, res, next) => {
     }
 
     if (!user.isRegistered || !user.hasPaid || !user.isOnboarded) {
-      return res.status(403).json({ 
+      return res.status(403).json({
         message: 'You are not eligible to access this resource',
         isRegistered: user.isRegistered,
         hasPaid: user.hasPaid,
@@ -65,7 +73,7 @@ export const verifyEligibility = async (req, res, next) => {
     }
 
     if (!user.hasActiveSubscription()) {
-      return res.status(403).json({ 
+      return res.status(403).json({
         message: 'Your subscription has expired',
         subscription: user.subscription
       });

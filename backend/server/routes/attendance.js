@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../models/User.js';
 import { protect, verifyEligibility } from '../middleware/auth.js';
+import sessionModel from '../models/sessionModel.js';
 import Joi from 'joi';
 import validate from '../middleware/validate.js';
 
@@ -21,35 +22,61 @@ router.post('/checkin', validate(checkinSchema), async (req, res) => {
     const today = new Date(now);
     today.setHours(0, 0, 0, 0);
 
-    const user = await User.findOneAndUpdate(
-      {
-        uniqueId,
-        isRegistered: true,
-        hasPaid: true,
-        isOnboarded: true,
-        'subscription.active': true,
-        'subscription.endDate': { $gte: now },
-        attendance: { $not: { $elemMatch: { date: today } } }
-      },
-      {
-        $push: { attendance: { date: today, checkIn: now, checkOut: null } }
-      },
-      { new: true }
-    );
+    // 1. Get active session
+    const activeSession = await sessionModel.findOne({ isActive: true });
+    if (!activeSession) {
+      return res.status(503).json({ message: 'No active academic session. Please contact admin.' });
+    }
 
+    // 2. Find user
+    const user = await User.findOne({ uniqueId });
     if (!user) {
-      const exists = await User.findOne({ uniqueId });
-      if (!exists) {
-        return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // 3. Handle Roll-over logic if session changed but user has paid semesters
+    const currentSessionId = user.sessionId ? user.sessionId.toString() : null;
+    const activeSessionId = activeSession._id.toString();
+
+    if (currentSessionId !== activeSessionId) {
+      if (user.semestersPaid > 0) {
+        // Roll over to new session
+        user.sessionId = activeSession._id;
+        user.semestersPaid -= 1;
+        user.subscription.startDate = activeSession.startDate;
+        user.subscription.endDate = activeSession.endDate;
+        user.subscription.active = true;
+        await user.save();
+      } else {
+        // Checking if already expired or just not yet linked
+        const isExpired = user.subscription && now > user.subscription.endDate;
+        if (isExpired || currentSessionId !== null) {
+          return res.status(403).json({ message: 'Subscription expired. Please pay for the new semester.' });
+        }
       }
+    }
+
+    // 4. Standard Eligibility Checks
+    if (!user.isRegistered || !user.hasPaid || !user.isOnboarded || !user.hasActiveSubscription()) {
+      return res.status(403).json({ message: 'User not eligible for check-in. Check registration and payment status.' });
+    }
+
+    // 5. Check if already checked in
+    const alreadyCheckedIn = user.attendance.some(a => {
+      const d = new Date(a.date);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime() === today.getTime();
+    });
+
+    if (alreadyCheckedIn) {
       return res.status(409).json({ message: 'Already checked in today' });
     }
 
-    const record = user.attendance.find(a => {
-      const d = new Date(a.date);
-      d.setHours(0,0,0,0);
-      return d.getTime() === today.getTime();
-    });
+    // 6. Record Check-in
+    user.attendance.push({ date: today, checkIn: now, checkOut: null });
+    await user.save();
+
+    const record = user.attendance[user.attendance.length - 1];
 
     return res.status(200).json({
       message: 'Check-in successful',
@@ -58,7 +85,7 @@ router.post('/checkin', validate(checkinSchema), async (req, res) => {
       attendance: record
     });
   } catch (error) {
-    console.error(error);
+    console.error('Check-in error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -73,7 +100,7 @@ router.get('/total-checkedin', protect, async (req, res) => {
     today.setHours(0, 0, 0, 0);
 
     // Filter users who checked in today
-    const checkedInToday = users.filter(user => 
+    const checkedInToday = users.filter(user =>
       user.attendance?.some(record => {
         const attendanceDate = new Date(record.date);
         attendanceDate.setHours(0, 0, 0, 0);
@@ -87,7 +114,7 @@ router.get('/total-checkedin', protect, async (req, res) => {
         name: u.name,
         email: u.email,
         uniqueId: u.uniqueId,
-        phone:u.phone,
+        phone: u.phone,
         checkInTime: u.attendance.find(a => {
           const d = new Date(a.date);
           d.setHours(0, 0, 0, 0);
@@ -121,7 +148,7 @@ router.post('/checkout', protect, verifyEligibility, async (req, res) => {
       },
       {
         new: true,
-        arrayFilters: [ { 'elem.date': today, 'elem.checkIn': { $ne: null }, 'elem.checkOut': null } ]
+        arrayFilters: [{ 'elem.date': today, 'elem.checkIn': { $ne: null }, 'elem.checkOut': null }]
       }
     );
 
@@ -129,7 +156,7 @@ router.post('/checkout', protect, verifyEligibility, async (req, res) => {
       return res.status(400).json({ message: 'No active check-in found for today' });
     }
 
-    res.json({ 
+    res.json({
       message: 'Check-out successful',
       checkOutTime: now
     });
@@ -145,16 +172,16 @@ router.post('/checkout', protect, verifyEligibility, async (req, res) => {
 router.get('/history', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     // Sort attendance by date (newest first)
-    const sortedAttendance = [...user.attendance].sort((a, b) => 
+    const sortedAttendance = [...user.attendance].sort((a, b) =>
       new Date(b.date) - new Date(a.date)
     );
-    
+
     res.json(sortedAttendance);
   } catch (error) {
     console.error(error);

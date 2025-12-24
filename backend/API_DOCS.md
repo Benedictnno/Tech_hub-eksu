@@ -21,6 +21,7 @@ For **all protected endpoints**, use:
 
 - `fetch` → `credentials: 'include'`
 - Axios → `withCredentials: true`
+- **Fallback**: If cookies are blocked (e.g. cross-site restrictions), you can send the token in the `Authorization` header: `Authorization: Bearer <token>`.
 
 ### 1.2 Getting a Token
 
@@ -138,6 +139,7 @@ Common fields:
   "subscription": { /* or null */ },
   "accountStatus": "Pending Payment" | "Active" | "Suspended",
   "paymentStatus": "Pending" | "Paid" | "Failed",
+  "semestersPaid": number,
   "mustChangePassword": true | false,
   "token": "jwt-string"
 }
@@ -325,6 +327,7 @@ Common fields:
     "endDate": "ISO",
     "active": true
   },
+  "semestersPaidBalance": number,
   "hasPaid": true
 }
 ```
@@ -943,3 +946,55 @@ await fetch('/api/users/profile', {
 
 - **Auth**: `protect` + `admin`
 - **Description**: Delete a product and its associated Cloudinary images.
+
+---
+
+## 9. User Registration Flow
+
+When a user clicks a registration link (e.g., `https://your-app.com/registration/[token]`), the following sequence occurs:
+
+1.  **Frontend Landing**: 
+    - The frontend extracts the `token` from the URL.
+    - It calls `GET /api/registration/token/:token` to validate the link.
+    - If valid, it displays user details and the registration fee.
+
+2.  **Initiating Payment**:
+    - The user clicks to pay.
+    - The frontend calls `POST /api/registration/paystack/:token/init`.
+    - The backend returns an `authorizationUrl` (Paystack checkout).
+    - The frontend redirects the user to Paystack.
+
+3.  **Payment Completion & Account Activation**:
+    - After payment, Paystack notifies the backend via `POST /api/registration/paystack/webhook`.
+    - The backend verifies the event and updates the user:
+        - `accountStatus` → `'Active'`
+        - `paymentStatus` → `'Paid'`
+        - `tokenUsed` → `true`
+
+4.  **Final Confirmation Email**:
+    - The backend automatically sends an activation email.
+    - This email contains the login link (`/login`) and the default temporary password (`Techhubpassword1`).
+
+5.  **First Login**:
+    - The user logs in with the temporary password.
+    - Because `firstLogin` is `true`, the system requires a mandatory password change before they can access the dashboard.
+
+---
+
+## 10. Multi-Semester Subscription Logic
+
+The system supports two subscription types: `semester` and `session`.
+
+### 10.1 Semester (1 Semester Access)
+- User pays for one semester.
+- `semestersPaid` is set to `0` after immediate consumption for the current session.
+- Access expires at the end of the current active session.
+
+### 10.2 Session (2 Semester Access)
+- User pays for two semesters.
+- `semestersPaid` is set to `1` after immediate consumption for the first semester.
+- **Rollover**: When the admin creates a *new* active session, the first check-in attempt by the user will:
+    1. Detect the session change.
+    2. Consume the remaining paid semester (`semestersPaid` becomes `0`).
+    3. Update the user's `sessionId` and `endDate` to match the new session.
+    4. Allow the check-in to proceed.

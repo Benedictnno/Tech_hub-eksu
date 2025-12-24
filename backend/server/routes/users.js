@@ -32,7 +32,7 @@ router.get("/all-users", async (req, res) => {
     const users = await User.find({}).select("-password");
 
     if (users) {
-      res.json({users:users.length});
+      res.json({ users: users.length });
     } else {
       res.status(404).json({ message: "No users" });
     }
@@ -135,7 +135,7 @@ router.post("/make-payment", protect, validate(makePaymentSchema), async (req, r
     const { subscriptionType } = req.body;
 
     const user = await User.findById(req.user._id);
-    
+
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -156,9 +156,16 @@ router.post("/make-payment", protect, validate(makePaymentSchema), async (req, r
     const end = new Date(endDate);
 
     user.hasPaid = true;
-    (user.sessionId = session._id),
+    user.sessionId = session._id;
+    user.membershipType = subscriptionType;
 
-      (user.membershipType = subscriptionType);
+    // Set paid semesters balance
+    // 1 for Semester, 2 for Session
+    const totalSemesters = subscriptionType === "session" ? 2 : 1;
+
+    // Consume one semester immediately for the current session
+    user.semestersPaid = totalSemesters - 1;
+
     user.subscription = {
       type: subscriptionType,
       startDate: start,
@@ -242,7 +249,7 @@ router.get('/start-of-current-session', async (req, res) => {
 
 // Get a single user by ID
 router.get('/:id', async (req, res) => {
-  
+
   try {
     const user = await User.findById(req.params.id).populate('sessionId').select("-password");
 

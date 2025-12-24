@@ -28,7 +28,7 @@ const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
-const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:3000,https://tech-hub-eksu.vercel.app")
+const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:3000,https://tech-hub-eksu.vercel.app,https://www.techhubeksu.com,https://techhubeksu.com")
   .split(',')
   .map(s => s.trim())
   .filter(Boolean);
