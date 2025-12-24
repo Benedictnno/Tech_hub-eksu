@@ -22,6 +22,7 @@ export const protect = async (req, res, next) => {
     }
 
     // Verify token
+    console.log('Verifying token (first 10 chars):', token.substring(0, 10));
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Get user from token
