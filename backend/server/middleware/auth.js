@@ -6,14 +6,17 @@ import User from '../models/User.js';
 export const protect = async (req, res, next) => {
   try {
     let token;
+    let tokenSource = 'None';
 
     // 1. Check cookies
     if (req.cookies && req.cookies.jwt) {
       token = req.cookies.jwt;
+      tokenSource = 'Cookie';
     }
     // 2. Fallback to Authorization header
     else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
+      tokenSource = 'Header';
     }
 
     if (token) {
@@ -26,7 +29,13 @@ export const protect = async (req, res, next) => {
     }
 
     // Verify token
-    console.log('Verifying token (first 10 chars):', token.substring(0, 10));
+    console.log(`Auth verification - Source: ${tokenSource}, Token (first 10 chars): ${token.substring(0, 10)}`);
+
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET is not defined!');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Get user from token

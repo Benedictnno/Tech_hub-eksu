@@ -51,7 +51,6 @@ app.use(cors({
     } else {
       console.log('CORS BLOCKED:', origin);
       console.log('Valid Origins:', allowedOrigins);
-      console.log('Full Request Headers:', req.headers); // This might need a custom middleware if cors() doesn't give req
       callback(new Error("Not allowed by CORS"));
     }
   },
