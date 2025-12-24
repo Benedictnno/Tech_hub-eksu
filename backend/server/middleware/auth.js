@@ -16,6 +16,10 @@ export const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
     }
 
+    if (token) {
+      token = token.trim();
+    }
+
     if (!token) {
       console.log('Auth failed: No token found in cookies or headers');
       return res.status(401).json({ message: 'Not authorized, no token' });

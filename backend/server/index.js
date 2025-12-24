@@ -39,11 +39,18 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // During debugging, let's log everything
+    console.log('CORS Request Origin:', origin);
+
+    if (!origin) return callback(null, true);
+
+    const isAllowed = allowedOrigins.some(o => origin.toLowerCase() === o.toLowerCase());
+
+    if (isAllowed) {
       callback(null, true);
     } else {
-      console.log('CORS blocked origin:', origin);
-      console.log('Allowed origins:', allowedOrigins);
+      console.log('CORS BLOCKED:', origin);
+      console.log('Valid Origins:', allowedOrigins);
       callback(new Error("Not allowed by CORS"));
     }
   },
