@@ -26,6 +26,8 @@ dotenv.config();
 // Initialize express app
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(cookieParser());
 app.use(express.json());
 const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:3000,https://tech-hub-eksu.vercel.app,https://www.techhubeksu.com,https://techhubeksu.com")
@@ -44,6 +46,9 @@ app.use(cors({
     }
   },
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+  exposedHeaders: ["Set-Cookie"]
 }));
 
 app.use((err, req, res, next) => {
