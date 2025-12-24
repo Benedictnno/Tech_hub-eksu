@@ -80,7 +80,11 @@ router.post("/login", loginLimiter, validate(loginSchema), async (req, res) => {
       accountStatus: user.accountStatus,
       paymentStatus: user.paymentStatus,
       mustChangePassword,
-      token: generateToken(res,user._id),
+      token: (function () {
+        const t = generateToken(res, user._id);
+        console.log('Login successful, token generated (length):', t.length);
+        return t;
+      })()
     });
   } catch (error) {
     console.error(error);
@@ -89,7 +93,7 @@ router.post("/login", loginLimiter, validate(loginSchema), async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-   res.cookie('jwt', '', {
+  res.cookie('jwt', '', {
     httpOnly: true,
     expires: new Date(0),
   });

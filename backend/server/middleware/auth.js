@@ -38,7 +38,8 @@ export const protect = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Token verification failed:', error.message);
+    console.error('Full Token Verification Error:', error);
+    console.error('Token attempted (length):', token ? token.length : 0);
     return res.status(401).json({ message: 'Not authorized, token invalid' });
   }
 };
