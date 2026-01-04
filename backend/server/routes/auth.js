@@ -62,7 +62,7 @@ router.post("/login", loginLimiter, validate(loginSchema), async (req, res) => {
       return res.status(403).json({
         message: 'Account is not active',
         accountStatus: user.accountStatus,
-        paymentStatus: user.paymentStatus,
+        // paymentStatus: user.paymentStatus,
       });
     }
 

@@ -57,8 +57,8 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
       createdByAdmin: req.user._id,
     });
 
-    const baseUrl = process.env.APP_PUBLIC_URL.replace(/\/$/, "");
-    const registrationLink = `${baseUrl}/registration/${token}`;
+    const baseUrl = process.env.LOGIN_URL.replace(/\/$/, "");
+    // const registrationLink = `${baseUrl}/registration/${token}`;
 
 
     const subject = "Welcome to TechHub Fellowship Program!";
@@ -71,7 +71,10 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
         <li>Pay the registration fee of ₦${REG_FEE_NAIRA}</li>
         <li>Complete your profile setup</li>
       </ol>
-      <p><strong>Registration Link:</strong> <a href="${registrationLink}">${registrationLink}</a></p>
+      <p><strong>Login Link:</strong> <a href="${baseUrl}">${baseUrl}</a></p>
+      <p> Login Email : ${email}</p>
+      <p><strong>Login Password:</strong>Techhubpassword1</p>
+      <p> make sure to use this password to login and change it after login</p>
       <p>This link expires in ${REG_TOKEN_DAYS} days.</p>
       <p>Best regards,<br/>TechHub Team</p>
     `;
