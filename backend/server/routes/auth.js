@@ -57,12 +57,11 @@ router.post("/login", loginLimiter, validate(loginSchema), async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Ensure account is active before allowing login
-    if (user.accountStatus !== 'Active') {
+    // Ensure account is not suspended before allowing login
+    if (user.accountStatus === 'Suspended') {
       return res.status(403).json({
-        message: 'Account is not active',
+        message: 'Account is suspended. Please contact administrator.',
         accountStatus: user.accountStatus,
-        // paymentStatus: user.paymentStatus,
       });
     }
 
