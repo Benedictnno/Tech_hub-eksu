@@ -4,10 +4,9 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 export const protect = async (req, res, next) => {
+  let token;
+  let tokenSource = 'None';
   try {
-    let token;
-    let tokenSource = 'None';
-
     // 1. Check cookies
     if (req.cookies && req.cookies.jwt) {
       token = req.cookies.jwt;
@@ -23,8 +22,9 @@ export const protect = async (req, res, next) => {
       token = token.trim();
     }
 
-    if (!token) {
-      console.log('Auth failed: No token found in cookies or headers');
+    // Handle case where frontend sends "null" or "undefined" as a string
+    if (!token || token === 'null' || token === 'undefined') {
+      console.log(`Auth failed: Invalid token found (${token}) in ${tokenSource}`);
       return res.status(401).json({ message: 'Not authorized, no token' });
     }
 
