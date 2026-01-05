@@ -121,9 +121,8 @@ router.post("/forgot-password", validate(forgotPasswordSchema), async (req, res)
     user.resetPasswordExpires = expires;
     await user.save();
 
-    const appUrl = process.env.APP_PUBLIC_URL || '';
-    const baseUrl = appUrl.replace(/\/$/, "");
-    const resetLink = `${baseUrl}/reset-password/${token}`;
+    const appUrl = (process.env.APP_PUBLIC_URL || '').replace(/\/$/, "");
+    const resetLink = `${appUrl}/reset-password/${token}`;
 
     const subject = "Reset your TechHub password";
     const html = `

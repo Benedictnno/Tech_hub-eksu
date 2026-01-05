@@ -117,8 +117,8 @@ router.post('/paystack/webhook', async (req, res) => {
           user.paymentReference = ref;
           await user.save();
 
-          const appUrl = process.env.APP_PUBLIC_URL || '';
-          const loginLink = appUrl.replace(/\/$/, '') + '/login';
+          const appUrl = (process.env.APP_PUBLIC_URL || '').replace(/\/$/, "");
+          const loginLink = appUrl + '/login';
           const subject = 'Payment Received - Account Activated';
           const html = `
             <p>Dear ${user.name},</p>

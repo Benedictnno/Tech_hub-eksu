@@ -724,6 +724,70 @@ _Only key public/admin endpoints relevant to frontend:_
 
 ---
 
+### 4.9 Admin – Session Management (`/api/admin`)
+
+_All require `protect` + `admin`._
+
+#### 4.9.1 `POST /api/admin/set-session`
+
+- **Description**: Create a new academic session. If `isActive` is true, all other sessions are set to `isActive: false`.
+- **Body**:
+
+```json
+{
+  "startDate": "ISO date string",
+  "endDate": "ISO date string",
+  "isActive": boolean
+}
+```
+
+- **Response 200**:
+
+```json
+{
+  "message": "Session created",
+  "session": { /* session object */ }
+}
+```
+
+#### 4.9.2 `GET /api/admin/sessions`
+
+- **Description**: Get all academic sessions, sorted by creation date (newest first).
+- **Response 200**: Array of session objects.
+
+#### 4.9.3 `PUT /api/admin/update-session/:id`
+
+- **Description**: Update an existing academic session. If `isActive` is sets to true, all other sessions are deactivated.
+- **Body**:
+
+```json
+{
+  "startDate": "ISO date string",
+  "endDate": "ISO date string",
+  "isActive": boolean
+}
+```
+
+- **Response 200**:
+
+```json
+{
+  "message": "Session updated",
+  "session": { /* updated session object */ }
+}
+```
+
+#### 4.9.4 `DELETE /api/admin/delete-session/:id`
+
+- **Description**: Delete an academic session.
+- **Response 200**:
+
+```json
+{ "message": "Session deleted" }
+```
+
+---
+
 ## 5. Data Models (Key Fields)
 
 ### 5.1 User

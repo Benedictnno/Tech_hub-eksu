@@ -9,7 +9,8 @@ const router = express.Router();
 
 const REG_FEE_NAIRA = parseInt(process.env.REGISTRATION_FEE_NAIRA || '1500', 10);
 const REG_TOKEN_DAYS = parseInt(process.env.REGISTRATION_TOKEN_DAYS || '7', 10);
-const APP_PUBLIC_URL = process.env.APP_PUBLIC_URL || '';
+const APP_PUBLIC_URL = (process.env.APP_PUBLIC_URL || '').replace(/\/$/, "");
+const LOGIN_URL = (process.env.LOGIN_URL || APP_PUBLIC_URL || '').replace(/\/$/, "");
 
 const manualCreateSchema = Joi.object({
   name: Joi.string().min(1).required(),
@@ -57,7 +58,7 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
       createdByAdmin: req.user._id,
     });
 
-    const baseUrl = process.env.LOGIN_URL.replace(/\/$/, "");
+    const baseUrl = LOGIN_URL;
     // const registrationLink = `${baseUrl}/registration/${token}`;
 
 
@@ -174,7 +175,7 @@ router.post("/users/:id/resend-link", protect, admin, async (req, res) => {
       await user.save();
     }
 
-    const baseUrl = process.env.APP_PUBLIC_URL.replace(/\/$/, "");
+    const baseUrl = APP_PUBLIC_URL;
     const registrationLink = `${baseUrl}/registration/${token}`;
 
     const subject = "Welcome to TechHub Fellowship Program!";
