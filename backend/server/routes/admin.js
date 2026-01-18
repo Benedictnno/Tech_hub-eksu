@@ -62,22 +62,75 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
     // const registrationLink = `${baseUrl}/registration/${token}`;
 
 
-    const subject = "Welcome to TechHub Fellowship Program!";
+    const subject = `Congratulations! You have been selected for the TechHub ${programType}`;
+
+    let specificContent = "";
+    if (programType === "Fellowship") {
+      specificContent = `
+          <p style="line-height: 1.6; margin-bottom: 20px;">The Fellowship is a responsibility-driven program. As a Fellow, you are expected to demonstrate leadership, discipline, and active commitment to the TechHub ecosystem. A core part of your role is to actively support, guide, and take responsibility for assigned Pre-Fellows. This responsibility is mandatory, not optional, and forms a critical part of your Fellowship evaluation.</p>
+
+          <p style="margin-bottom: 15px;">Please note the following Fellowship policies:</p>
+          <ul style="line-height: 1.6; margin-bottom: 25px;">
+            <li>Fellows are expected to uphold all <strong>TechHub EKSU terms, policies, and code of conduct</strong> at all times.</li>
+            <li>Failure to comply with these terms may result in <strong>suspension or cancellation of membership</strong>, at the discretion of TechHub EKSU.</li>
+            <li>Fellows have access to the TechHub space Monday to Friday, with <strong>Monday to Wednesday reserved exclusively for Fellows</strong>.</li>
+            <li>Professional conduct, accountability, and mentorship commitment are non-negotiable expectations of the Fellowship.</li>
+          </ul>
+      `;
+    } else {
+      specificContent = `
+          <p style="line-height: 1.6; margin-bottom: 20px;">The Pre-Fellowship is a structured learning and growth pipeline designed to prepare committed members for the Fellowship track. Your progress in this phase depends heavily on consistency, discipline, and a strong commitment to learning.</p>
+
+          <p style="margin-bottom: 15px;">Please note the following Pre-Fellowship guidelines:</p>
+          <ul style="line-height: 1.6; margin-bottom: 25px;">
+            <li>Pre-Fellows are required to show active commitment to learning, <strong>skill development, and community engagement</strong>.</li>
+            <li>Access to the TechHub space for Pre-Fellows is strictly on <strong>Thursdays and Fridays only</strong>.</li>
+            <li>You are required to <strong>fill a mentorship assignment form</strong>, through which a Fellow will be assigned as your mentor.</li>
+            <li>Once assigned, you will be <strong>accountable to your mentor</strong> for learning progress, attendance, and growth milestones.</li>
+            <li>Progress in the Pre-Fellowship determines eligibility for advancement into the Fellowship pipeline.</li>
+          </ul>
+
+          <p style="margin-bottom: 20px;">We encourage you to take this opportunity seriously and make the most of the learning structure provided.</p>
+      `;
+    }
+
     const html = `
-      <p>Dear ${name},</p>
-      <p>Congratulations! You have been selected for the ${programType} program.</p>
-      <p>To complete your registration, please:</p>
-      <ol>
-        <li>Click the link below</li>
-        <li>Pay the registration fee of ₦${REG_FEE_NAIRA}</li>
-        <li>Complete your profile setup</li>
-      </ol>
-      <p><strong>Login Link:</strong> <a href="${baseUrl}">${baseUrl}</a></p>
-      <p> Login Email : ${email}</p>
-      <p><strong>Login Password:</strong>Techhubpassword1</p>
-      <p> make sure to use this password to login and change it after login</p>
-      <p>This link expires in ${REG_TOKEN_DAYS} days.</p>
-      <p>Best regards,<br/>TechHub Team</p>
+      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+           <h1 style="color: #00bcd4; margin: 0; font-size: 24px;">Tech<span style="color: #eda50b;">HUB</span></h1>
+        </div>
+        
+        <div style="background-color: #e0f7fa; padding: 30px 20px; text-align: center; border-radius: 8px; margin-bottom: 30px;">
+           <h2 style="color: #333; font-size: 28px; margin: 0 0 10px 0;">Congratulations<br/>${name}!</h2>
+           <p style="font-size: 18px; color: #555; margin: 0;">You have been selected for the <strong>TechHub EKSU ${programType}</strong> Program.</p>
+        </div>
+
+        <div style="padding: 0 10px;">
+          <p style="margin-bottom: 15px;">To complete your registration, please follow the steps below:</p>
+          <ul style="line-height: 1.6; margin-bottom: 25px;">
+            <li>Click the link below</li>
+            <li>Pay the registration fee of ₦${REG_FEE_NAIRA.toLocaleString()}</li>
+            <li>Complete your profile setup</li>
+          </ul>
+
+          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #00bcd4;">
+            <p style="margin: 8px 0;"><strong>Login Link:</strong> <a href="${baseUrl}" style="color: #00bcd4; text-decoration: none;">${baseUrl}</a></p>
+            <p style="margin: 8px 0;"><strong>Login Email:</strong> ${email}</p>
+            <p style="margin: 8px 0;"><strong>Login Password:</strong> Techhubpassword1</p>
+            <p style="margin: 15px 0 5px 0; font-size: 13px; color: #666; font-style: italic;">Please ensure you use this password to log in and change it immediately after your first login.</p>
+            <p style="margin: 5px 0; font-size: 13px; color: #666;">This link expires in ${REG_TOKEN_DAYS} days.</p>
+          </div>
+
+          ${specificContent}
+          
+          <p style="margin-top: 30px;">Best regards,<br/><strong>TechHub Team</strong></p>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #888;">
+           <h3 style="color: #00bcd4; margin: 0 0 10px 0; font-size: 18px;">Tech<span style="color: #eda50b;">HUB</span></h3>
+           <p>Ekiti State University, Ado-Ekiti, Ekiti.</p>
+        </div>
+      </div>
     `;
 
     try {
