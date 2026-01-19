@@ -97,9 +97,9 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
     const html = `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
         <div style="text-align: center; margin-bottom: 20px;">
-          <img src="https://www.techhubeksu.com/techhub-logo.svg" alt="TechHub EKSU Logo" style="max-width: 200px; height: auto;">
+          <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/73ee30d3d4cbd883c9471f5e1ca47ad1a845f121.png" alt="TechHub EKSU Logo" style="max-width: 200px; height: auto;">
         </div>
-          <img src="./images/Tech_Hub-Frame.png" alt="TechHub EKSU Logo" style="max-width: full; height: auto;">
+          <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/OBJECTS.png" alt="TechHub EKSU Logo" style="max-width: full; height: auto; background-color: #00bcd4;">
         
         <div style="padding: 30px 20px; text-align: center; border-radius: 8px; margin-bottom: 30px;">
            <h2 style="color: #333; font-size: 28px; margin: 0 0 10px 0;">Congratulations<br/>${name}!</h2>
