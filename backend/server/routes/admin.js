@@ -95,16 +95,16 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
     }
 
     const html = `
-      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 10px; border: 1px solid #eee; border-radius: 10px;">
         <div style="text-align: center; margin-bottom: 20px;">
           <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/73ee30d3d4cbd883c9471f5e1ca47ad1a845f121.png" alt="TechHub EKSU Logo" style="max-width: 200px; height: auto;">
         </div>
-          <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/OBJECTS.png" alt="TechHub EKSU Logo" style="width: full-width; height: auto; background-color: #00bcd4; margin:0 auto; display:block;">
+        <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/OBJECTS.png" alt="TechHub EKSU Logo" style="width: 100%; height: auto; background-color: #00bcd4; margin:0 auto; display:block;">
         
         <div style="padding: 30px 20px; text-align: center; border-radius: 8px; margin-bottom: 30px;">
            <h2 style="color: #333; font-size: 28px; margin: 0 0 10px 0;">Congratulations<br/>${name}!</h2>
            <p style="font-size: 18px; font-weight: bold; color: #555; margin: 0;">You have been selected for the <span style="color: #00bcd4;">TechHub EKSU ${programType}</span> Program.</p>
-        </div>  
+        </div> 
 
         <div style="padding: 0 10px;">
           <p style="margin-bottom: 15px;">To complete your registration, please follow the steps below:</p>
