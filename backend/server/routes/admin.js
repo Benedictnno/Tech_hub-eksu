@@ -95,8 +95,8 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
     }
 
     const html = `
-      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 10px; border: 1px solid #eee; border-radius: 10px;">
-        <div style="text-align: center; margin-bottom: 20px;">
+      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 0; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
+        <div style="text-align: center; padding: 20px;">
           <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/73ee30d3d4cbd883c9471f5e1ca47ad1a845f121.png" alt="TechHub EKSU Logo" style="max-width: 200px; height: auto;">
         </div>
         <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/OBJECTS.png" alt="TechHub EKSU Logo" style="width: 100%; height: auto; background-color: #00bcd4; margin:0 auto; display:block;">
@@ -106,7 +106,7 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
            <p style="font-size: 18px; font-weight: bold; color: #555; margin: 0;">You have been selected for the <span style="color: #00bcd4;">TechHub EKSU ${programType}</span> Program.</p>
         </div> 
 
-        <div style="padding: 0 10px;">
+        <div style="padding: 0 30px 30px;">
           <p style="margin-bottom: 15px;">To complete your registration, please follow the steps below:</p>
           <ul style="line-height: 1.6; margin-bottom: 25px;">
             <li>Click the link below</li>
@@ -127,7 +127,7 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
           <p style="margin-top: 30px;">Best regards,<br/><strong>TechHub Team</strong></p>
         </div>
 
-        <div style="text-align: center; justify-content: center; align-items: center; background-color: #263238; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #888;">
+        <div style="text-align: center; justify-content: center; align-items: center; background-color: #263238; padding: 20px; border-top: 1px solid #eee; font-size: 12px; color: #888;">
            <h3 style="color: #00bcd4; margin: 0 0 10px 0; font-size: 18px;">Tech<span style="color: #eda50b;">HUB</span></h3>
            <p>Ekiti State University, Ado-Ekiti, Ekiti.</p>
         </div>
