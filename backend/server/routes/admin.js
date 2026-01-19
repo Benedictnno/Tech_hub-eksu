@@ -99,7 +99,7 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
         <div style="text-align: center; padding: 20px;">
           <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/73ee30d3d4cbd883c9471f5e1ca47ad1a845f121.png" alt="TechHub EKSU Logo" style="max-width: 200px; height: auto;">
         </div>
-        <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/OBJECTS.png" alt="TechHub EKSU Logo" style="width: 100vw; height: fit-content; background-color: #00bcd4; margin:0 auto; display: block; object-fit: cover; object-position: center; object-size: cover; ">
+        <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/OBJECTS.png" alt="TechHub EKSU Logo" style="width: 100vw; height: auto; background-color: #00bcd4; margin:0 auto; display: block; object-fit: cover; object-position: center; object-size: cover; ">
         
         <div style="padding: 30px 20px; text-align: center; border-radius: 8px; margin-bottom: 30px;">
            <h2 style="color: #333; font-size: 28px; margin: 0 0 10px 0;">Congratulations<br/>${name}!</h2>
