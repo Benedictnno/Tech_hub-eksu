@@ -278,7 +278,28 @@ Common fields:
 
 > Frontend should only send valid/allowed fields (no whitelist on backend).
 
-#### 4.2.3 `GET /api/users/all-users`
+#### 4.2.3 `POST /api/users/change-password`
+
+- **Auth**: `protect`
+- **Description**: Change user password after verifying current one.
+- **Body**:
+
+```json
+{
+  "currentPassword": "string",
+  "newPassword": "string (min 6)"
+}
+```
+
+- **Response 200**:
+
+```json
+{ "message": "Password changed successfully" }
+```
+
+- **Error 400**: Incorrect current password.
+
+#### 4.2.4 `GET /api/users/all-users`
 
 - **Auth**: Public
 - **Response**:
@@ -488,15 +509,33 @@ search=string  // matched against name, email, phone (case-insensitive)
 }
 ```
 
-#### 4.3.8 `DELETE /api/admin/users/:id`
-
-- **Behavior**:
-  - Deletes user by id.
-- **Response 200**:
-
 ```json
 { "message": "User deleted" }
 ```
+
+#### 4.3.9 `PUT /api/admin/users/:id`
+
+- **Auth**: `protect` + `admin`
+- **Description**: Update user details.
+- **Body**:
+
+```json
+{
+  "name": "string",
+  "email": "string",
+  "role": "user" | "admin",
+  "programType": "Fellowship" | "Pre-Fellowship",
+  "isRegistered": boolean,
+  "hasPaid": boolean,
+  "isOnboarded": boolean,
+  "subscription": { /* subscription object */ }
+}
+```
+
+- **Behavior**:
+  - Checks for email uniqueness if email is changed.
+  - Updates specified fields.
+- **Response 200**: Updated user object.
 
 ---
 

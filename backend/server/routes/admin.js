@@ -99,7 +99,7 @@ router.post("/users/manual-create", protect, admin, async (req, res) => {
         <div style="text-align: center; padding: 20px;">
           <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/73ee30d3d4cbd883c9471f5e1ca47ad1a845f121.png" alt="TechHub EKSU Logo" style="max-width: 200px; height: auto;">
         </div>
-        <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/OBJECTS.png" alt="TechHub EKSU Logo" style="width: 100%; height: auto; background-color: #00bcd4; margin:0 auto; display: block;">
+        <img src="https://vrb7y8piiyqjtoqh.public.blob.vercel-storage.com/OBJECTS.png" alt="TechHub EKSU Logo" style="width: 100%9; height: auto; background-color: #00bcd4; margin:0 auto; display: block;">
         
         <div style="padding: 30px 20px; text-align: center; border-radius: 8px; margin-bottom: 30px;">
            <h2 style="color: #333; font-size: 28px; margin: 0 0 10px 0;">Congratulations<br/>${name}!</h2>
@@ -345,9 +345,17 @@ router.put("/users/:id", protect, admin, async (req, res) => {
     const user = await User.findById(req.params.id);
 
     if (user) {
+      if (req.body.email && req.body.email !== user.email) {
+        const emailExists = await User.findOne({ email: req.body.email });
+        if (emailExists) {
+          return res.status(400).json({ message: "Email already in use" });
+        }
+        user.email = req.body.email;
+      }
+
       user.name = req.body.name || user.name;
-      user.email = req.body.email || user.email;
       user.role = req.body.role || user.role;
+      user.programType = req.body.programType || user.programType;
       user.isRegistered =
         req.body.isRegistered !== undefined
           ? req.body.isRegistered
